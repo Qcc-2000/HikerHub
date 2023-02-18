@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -32,6 +35,9 @@ public class A6Adapter extends RecyclerView.Adapter<A6Adapter.ViewHolder> {
         Country country = countries.get(position);
         holder.getCountryIdTextView().setText("Country_id:  " + country.getCountry_id());
         holder.getPossibilityTextView().setText("Probability:  " + country.getProbability().toString());
+
+        Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), android.R.anim.slide_in_left);
+        holder.itemView.startAnimation(animation);
     }
 
     @Override

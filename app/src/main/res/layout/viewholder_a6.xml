@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent"
     android:layout_margin="5dp"
@@ -15,26 +15,27 @@
 
         <TextView
             android:id="@+id/textview_country_id"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"
             android:layout_marginTop="2dp"
-            android:textSize="10sp"
             android:text="country_id"
-            />
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textview_possibility"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textview_country_id"
             android:layout_marginHorizontal="50dp"
             android:layout_marginTop="2dp"
-            android:textSize="10sp"
             android:text="possibility"
+            android:textSize="13sp"
+            android:textStyle="bold"
 
             />
 
 
     </RelativeLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

@@ -18,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,9 +41,6 @@ public class A6 extends AppCompatActivity {
         setContentView(R.layout.activity_a6);
         nameEditText = findViewById(R.id.edit_text_name_input);
         progressBar = findViewById(R.id.progressBar);
-        Drawable progressDrawable = progressBar.getProgressDrawable().mutate();
-        progressDrawable.setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
-        progressBar.setProgressDrawable(progressDrawable);
         progressBar.setVisibility(View.INVISIBLE);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         adapter = new A6Adapter();
