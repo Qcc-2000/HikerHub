@@ -1,13 +1,20 @@
 package edu.northeastern.hikerhub;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -23,12 +30,18 @@ public class A6 extends AppCompatActivity {
     private EditText nameEditText;
     private Context context;
     private A6Adapter adapter;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_a6);
         nameEditText = findViewById(R.id.edit_text_name_input);
+        progressBar = findViewById(R.id.progressBar);
+        Drawable progressDrawable = progressBar.getProgressDrawable().mutate();
+        progressDrawable.setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+        progressBar.setProgressDrawable(progressDrawable);
+        progressBar.setVisibility(View.INVISIBLE);
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         adapter = new A6Adapter();
         context = this;
@@ -41,6 +54,7 @@ public class A6 extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
     }
     public void search(View view) {
+        progressBar.setVisibility(View.VISIBLE);
         String name = nameEditText.getText().toString();
         service.listCountry(name).enqueue(new Callback<CountryList>() {
             @Override
@@ -51,6 +65,8 @@ public class A6 extends AppCompatActivity {
 //                for(Country country: list.getCountry()){
 //                    System.out.println(country.getCountry_id());
 //                }
+
+                progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override

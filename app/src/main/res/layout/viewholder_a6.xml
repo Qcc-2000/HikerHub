@@ -1,30 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="10dp"
+    app:contentPadding="10dp">
 
-    <TextView
-        android:id = "@+id/textview_country_id"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="30dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textview_possibility"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
-    <TextView
-        android:id = "@+id/textview_possibility"
-        android:layout_width="100dp"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textSize="30dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textview_country_id"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textview_country_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="2dp"
+            android:textSize="10sp"
+            android:text="country_id"
+            />
+
+        <TextView
+            android:id="@+id/textview_possibility"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview_country_id"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="2dp"
+            android:textSize="10sp"
+            android:text="possibility"
+
+            />
+
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

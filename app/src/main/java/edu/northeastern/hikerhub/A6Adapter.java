@@ -30,8 +30,8 @@ public class A6Adapter extends RecyclerView.Adapter<A6Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Country country = countries.get(position);
-        holder.getCountryIdTextView().setText(country.getCountry_id());
-        holder.getPossibilityTextView().setText(country.getProbability().toString());
+        holder.getCountryIdTextView().setText("Country_id:  " + country.getCountry_id());
+        holder.getPossibilityTextView().setText("Probability:  " + country.getProbability().toString());
     }
 
     @Override
