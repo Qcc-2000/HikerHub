@@ -13,15 +13,9 @@ public class Country {
         return country_id;
     }
 
-    public void setCountry_id(String country_id) {
-        this.country_id = country_id;
-    }
 
     public Double getProbability() {
         return probability;
     }
 
-    public void setProbability(Double probability) {
-        this.probability = probability;
-    }
 }
