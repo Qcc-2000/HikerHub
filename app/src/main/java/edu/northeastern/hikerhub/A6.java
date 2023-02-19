@@ -18,8 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.google.android.material.snackbar.Snackbar;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +36,6 @@ public class A6 extends AppCompatActivity {
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private CountryList list;
-    private ConstraintLayout parent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +79,6 @@ public class A6 extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
         recyclerView = findViewById(R.id.recyclerview);
         adapter = new A6Adapter();
-        parent = findViewById(R.id.parent);
         context = this;
         initRecyclerView(recyclerView, new LinearLayoutManager(this), adapter);
         Retrofit retrofit = new Retrofit.Builder().baseUrl(URL).addConverterFactory(GsonConverterFactory.create()).build();
@@ -111,12 +107,9 @@ public class A6 extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<CountryList> call, Throwable t) {
-                Snackbar.make(parent,"Failure",Snackbar.LENGTH_SHORT).setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                Toast.makeText(context, "Failure", Toast.LENGTH_SHORT).show();
 
-                    }
-                }).show();
+
             }
         });
 
