@@ -17,4 +17,12 @@ public class MainActivity extends AppCompatActivity {
     public void startA6Activity(View view){
         startActivity(new Intent(this,A6.class));
     }
+
+    public void startFirebaseActivity(View view){
+        startActivity(new Intent(this, FirebaseActivity.class));
+    }
+
+    public void startGroupProjectActivity(View view) {
+        startActivity(new Intent(this, GroupActivity.class));
+    }
 }
