@@ -41,15 +41,7 @@ public class A6 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_a6);
-        nameEditText = findViewById(R.id.edit_text_name_input);
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
-        recyclerView = findViewById(R.id.recyclerview);
-        adapter = new A6Adapter();
-        context = this;
-        initRecyclerView(recyclerView, new LinearLayoutManager(this), adapter);
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(URL).addConverterFactory(GsonConverterFactory.create()).build();
-        service = retrofit.create(A6Service.class);
+        init();
         if (savedInstanceState != null) {
             ArrayList<String> id;
             double[] pro;
@@ -78,6 +70,19 @@ public class A6 extends AppCompatActivity {
 
         savedInstanceState.putStringArrayList("id", id);
         savedInstanceState.putDoubleArray("pro", pro);
+    }
+
+    public void init()
+    {
+        nameEditText = findViewById(R.id.edit_text_name_input);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
+        recyclerView = findViewById(R.id.recyclerview);
+        adapter = new A6Adapter();
+        context = this;
+        initRecyclerView(recyclerView, new LinearLayoutManager(this), adapter);
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(URL).addConverterFactory(GsonConverterFactory.create()).build();
+        service = retrofit.create(A6Service.class);
     }
     public void initRecyclerView(RecyclerView recyclerView, RecyclerView.LayoutManager manager, RecyclerView.Adapter adapter) {
         recyclerView.setAdapter(adapter);
