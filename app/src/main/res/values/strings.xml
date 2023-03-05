@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">HikerHub</string>
+    <string name="channel_name">Notification Name</string>
+    <string name="channel_description">Notification Channel for the demo app</string>
+    <string name="channel_id">Channel_Name_NUMAD_demo</string>
+
+    <string name="send_notification_text">Send Android Notification</string>
 </resources>
