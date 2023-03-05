@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -68,6 +67,13 @@ public class SendStickerActivity extends AppCompatActivity {
         ivCat1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(selectedImage==ivCat1)
+                {
+                    ivCat1.getDrawable().clearColorFilter();
+                    selectedImage = null;
+                    stickerId = null;
+                    return;
+                }
                 stickerId = String.valueOf(R.drawable.cat1);
                 ivCat1.getDrawable().setColorFilter(0x77000000,PorterDuff.Mode.SRC_ATOP);
 
@@ -78,6 +84,14 @@ public class SendStickerActivity extends AppCompatActivity {
         ivCat2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if(selectedImage==ivCat2)
+                {
+                    ivCat2.getDrawable().clearColorFilter();
+                    selectedImage = null;
+                    stickerId = null;
+                    return;
+                }
                 stickerId = String.valueOf(R.drawable.cat2);
                 ivCat2.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
                 selectedImage = ivCat2;
@@ -87,6 +101,12 @@ public class SendStickerActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(selectedImage==null)
+                {
+                    Utils.postToastMessage("failed-no sticker selected",
+                            getApplicationContext());
+                    return;
+                }
                 receiverUserName = et_receiver.getText().toString();
                 selectedImage.getDrawable().clearColorFilter();
                 Log.d("logInfo=:",receiverUserName);
@@ -98,68 +118,37 @@ public class SendStickerActivity extends AppCompatActivity {
 
     // Sends sticker to another user
     private void sendSticker(String senderUserName, String receiverUserName, String stickerId) {
-        //Generally, you should use the ValueEventListener to read data to get notified of updates to the data.
-        //If you need the data only once, you can use get() to get a snapshot of the data from the database.
-        mDatabase.child(USER_TABLE).child(receiverUserName).get().addOnCompleteListener(
-                new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (!task.isSuccessful()) {
-                    Log.w("Send sticker to " + receiverUserName + "  failure", task.getException());
-                    return;
-                } else {
-                    User receiver = task.getResult().getValue(User.class);
-                    if (receiver == null) {
-                        Utils.postToastMessage(String.format("Receiver %s doesn't exist", receiverUserName),
-                                getApplicationContext());
-                        return;
-                    }
-                    if (receiver.fcmToken.isEmpty()) {
-                        Utils.postToastMessage(
-                                String.format("Receiver %s doesn't have a registered device", receiverUserName),
-                                getApplicationContext());
-                        return;
+
+        mDatabase.child(USER_TABLE).child(receiverUserName).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        User receiver = snapshot.getValue(User.class);
+                        if (receiver == null) {
+                            Utils.postToastMessage(String.format("Receiver %s doesn't exist", receiverUserName),
+                                    getApplicationContext());
+                            return;
+                        }
+                        if (receiver.fcmToken.isEmpty()) {
+                            Utils.postToastMessage(
+                                    String.format("Receiver %s doesn't have a registered device", receiverUserName),
+                                    getApplicationContext());
+                            return;
+                        }
+
+                        String eventId = UUID.randomUUID().toString();
+                        Event event = new Event(eventId, stickerId, senderUserName, receiverUserName,
+                                Instant.now().toEpochMilli(), false);
+                        mDatabase.child(EVENT_TABLE).child(eventId).setValue(event);
+                        sendMessageToDevice(senderUserName, stickerId, eventId, receiverUserName,
+                                receiver.fcmToken);
                     }
 
-                    String eventId = UUID.randomUUID().toString();
-                    Event event = new Event(eventId, stickerId, senderUserName, receiverUserName,
-                            Instant.now().toEpochMilli(), false);
-                    mDatabase.child(EVENT_TABLE).child(eventId).setValue(event);
-                    sendMessageToDevice(senderUserName, stickerId, eventId, receiverUserName,
-                            receiver.fcmToken);
-                }
-            }
-        });
-//        mDatabase.child(USER_TABLE).child(receiverUserName).addValueEventListener(
-//                new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        User receiver = snapshot.getValue(User.class);
-//                        if (receiver == null) {
-//                            Utils.postToastMessage(String.format("Receiver %s doesn't exist", receiverUserName),
-//                                    getApplicationContext());
-//                            return;
-//                        }
-//                        if (receiver.fcmToken.isEmpty()) {
-//                            Utils.postToastMessage(
-//                                    String.format("Receiver %s doesn't have a registered device", receiverUserName),
-//                                    getApplicationContext());
-//                            return;
-//                        }
-//
-//                        String eventId = UUID.randomUUID().toString();
-//                        Event event = new Event(eventId, stickerId, senderUserName, receiverUserName,
-//                                Instant.now().toEpochMilli(), false);
-//                        mDatabase.child(EVENT_TABLE).child(eventId).setValue(event);
-//                        sendMessageToDevice(senderUserName, stickerId, eventId, receiverUserName,
-//                                receiver.fcmToken);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//                        // ...
-//                    }
-//                });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // ...
+                    }
+                });
 
     }
 
@@ -191,7 +180,7 @@ public class SendStickerActivity extends AppCompatActivity {
             @Override
             public void run() {
                 final String resp =
-                        edu.northeastern.hikerhub.utils.Utils.fcmHttpConnection(serverKey, jPayload);
+                        Utils.fcmHttpConnection(serverKey, jPayload);
                 Log.i(TAG, String.format("FCM Server response: %s", resp));
                 try {
                     JSONObject responseJson = new JSONObject(resp);
