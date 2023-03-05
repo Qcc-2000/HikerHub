@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "760550259639",
+    "project_id": "a8firebase-5c356",
+    "storage_bucket": "a8firebase-5c356.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:760550259639:android:35745a0c41870a99774632",
+        "android_client_info": {
+          "package_name": "edu.northeastern.hikerhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "760550259639-05o9dn4m9lo37nh8a6p500e3erf3u0kl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJh0r84sZrAE2zOsOTMphdhoSkiKYVJME"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "760550259639-05o9dn4m9lo37nh8a6p500e3erf3u0kl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
