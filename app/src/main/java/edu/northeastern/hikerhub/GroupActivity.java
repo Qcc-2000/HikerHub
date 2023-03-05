@@ -18,6 +18,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import edu.northeastern.hikerhub.stickerService.models.User;
 import edu.northeastern.hikerhub.user.UserActivity;
+import edu.northeastern.hikerhub.utils.ViewUtils;
 
 public class GroupActivity extends AppCompatActivity {
 
@@ -49,6 +50,7 @@ public class GroupActivity extends AppCompatActivity {
 
         EditText etName = findViewById(R.id.inputUserName);
         Button btnRegister = findViewById(R.id.btnRegister);
+        etName.addTextChangedListener(new ViewUtils.JumpTextWatcher(etName,btnRegister));
         btnRegister.setOnClickListener(view -> {
             login(etName.getText().toString());
         });
