@@ -2,10 +2,18 @@ package edu.northeastern.hikerhub.stickerService;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +43,9 @@ public class ReceiveHistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_receive_history);
 
         // Connects firebase
@@ -85,8 +96,10 @@ public class ReceiveHistoryActivity extends AppCompatActivity {
 
     private void getHistoryOfReceivedStickers(String userName) {
 
-        mDatabase.child(EVENT_TABLE).orderByChild(EVENT_RECEIVER).equalTo(
-                userName).addValueEventListener(new ValueEventListener() {
+        mDatabase.child(EVENT_TABLE)
+                .orderByChild(EVENT_RECEIVER)
+                .equalTo(userName)
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<Event> eventHistory = new ArrayList<>();
@@ -97,6 +110,8 @@ public class ReceiveHistoryActivity extends AppCompatActivity {
                     }
                 }
                 updateHistoryView(eventHistory);
+
+
             }
 
             @Override
@@ -112,4 +127,9 @@ public class ReceiveHistoryActivity extends AppCompatActivity {
         historyEvents = events;
         createRecyclerView();
     }
+
+    // notification
+
+
+    //notification end
 }

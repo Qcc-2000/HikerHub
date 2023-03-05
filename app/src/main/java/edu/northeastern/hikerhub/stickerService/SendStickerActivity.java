@@ -61,10 +61,6 @@ public class SendStickerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // new
-        createNotificationChannel();
-        // new end
-
         setContentView(R.layout.activity_send_sticker);
         serverKey = "key=" + Utils.getProperties(getApplicationContext()).getProperty("SERVER_KEY");
         // Connects firebase
@@ -125,10 +121,6 @@ public class SendStickerActivity extends AppCompatActivity {
                 Log.d("logInfo=:",receiverUserName);
                 sendSticker(senderUserName, receiverUserName, stickerId);
 
-                // notification
-                createNotificationChannel();
-                sendNotification(view);
-                // notification end
             }
         });
 
@@ -250,52 +242,5 @@ public class SendStickerActivity extends AppCompatActivity {
         // TODO:
     }
 
-    // notification
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is not in the Support Library.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(getString(R.string.channel_id), name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system. You can't change the importance
-            // or other notification behaviors after this.
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
-    public void sendNotification(View view) {
-        // Prepare intent which is triggered if the
-        // notification is selected
-        Intent intent = new Intent(this, ReceiveNotificationActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
-        PendingIntent callIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(),
-                new Intent(this, ReceiveHistoryActivity.class), 0);
-
-
-        // Build notification
-        // Actions are just fake
-        String channelId = getString(R.string.channel_id);
-
-//        Notification noti = new Notification.Builder(this)   DEPRECATED
-        Notification noti = new NotificationCompat.Builder(this,channelId)
-
-                .setContentTitle("New mail from " + "test@gmail.com")
-                .setContentText("Subject").setSmallIcon(R.drawable.ic_launcher_foreground)
-
-                .addAction(R.drawable.ic_launcher_foreground, "Call", callIntent).setContentIntent(pIntent).build();
-//                .addAction(R.drawable.icon, "More", pIntent)
-//              .addAction(R.drawable.icon, "And more", pIntent).build();
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // hide the notification after its selected
-        noti.flags |= Notification.FLAG_AUTO_CANCEL ;
-
-        notificationManager.notify(0, noti);
-    }
-    //notification end
 }
