@@ -25,4 +25,7 @@ public class MainActivity extends AppCompatActivity {
     public void startGroupProjectActivity(View view) {
         startActivity(new Intent(this, GroupActivity.class));
     }
+    public void startAboutActivity(View view) {
+        startActivity(new Intent(this, AboutActivity.class));
+    }
 }
