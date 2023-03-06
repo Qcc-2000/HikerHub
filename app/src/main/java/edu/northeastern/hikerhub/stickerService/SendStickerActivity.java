@@ -1,5 +1,7 @@
 package edu.northeastern.hikerhub.stickerService;
 
+import static android.app.PendingIntent.FLAG_IMMUTABLE;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
@@ -73,40 +75,42 @@ public class SendStickerActivity extends AppCompatActivity {
         //image
         ImageView ivCat1 = (ImageView) findViewById(R.id.cat1);
         ImageView ivCat2 = (ImageView) findViewById(R.id.cat2);
-        ivCat1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(selectedImage==ivCat1)
-                {
-                    ivCat1.getDrawable().clearColorFilter();
-                    selectedImage = null;
-                    stickerId = null;
-                    return;
-                }
-                stickerId = String.valueOf(R.drawable.cat1);
-                ivCat1.getDrawable().setColorFilter(0x77000000,PorterDuff.Mode.SRC_ATOP);
-
-                selectedImage = ivCat1;
-                Log.d("logInfo=:",stickerId);
-            }
-        });
-        ivCat2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(selectedImage==ivCat2)
-                {
-                    ivCat2.getDrawable().clearColorFilter();
-                    selectedImage = null;
-                    stickerId = null;
-                    return;
-                }
-                stickerId = String.valueOf(R.drawable.cat2);
-                ivCat2.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
-                selectedImage = ivCat2;
-                Log.d("logInfo=:",stickerId);
-            }
-        });
+        ivCat1.setOnClickListener(clickListener);
+        ivCat2.setOnClickListener(clickListener);
+//        ivCat1.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(selectedImage==ivCat1)
+//                {
+//                    ivCat1.getDrawable().clearColorFilter();
+//                    selectedImage = null;
+//                    stickerId = null;
+//                    return;
+//                }
+//                stickerId = String.valueOf(R.drawable.cat1);
+//                ivCat1.getDrawable().setColorFilter(0x77000000,PorterDuff.Mode.SRC_ATOP);
+//
+//                selectedImage = ivCat1;
+//                Log.d("logInfo=:",stickerId);
+//            }
+//        });
+//        ivCat2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                if(selectedImage==ivCat2)
+//                {
+//                    ivCat2.getDrawable().clearColorFilter();
+//                    selectedImage = null;
+//                    stickerId = null;
+//                    return;
+//                }
+//                stickerId = String.valueOf(R.drawable.cat2);
+//                ivCat2.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+//                selectedImage = ivCat2;
+//                Log.d("logInfo=:",stickerId);
+//            }
+//        });
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +129,19 @@ public class SendStickerActivity extends AppCompatActivity {
         });
 
     }
+
+    View.OnClickListener clickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ImageView imageView = (ImageView) view;
+            if(selectedImage != null)  selectedImage.getDrawable().clearColorFilter();
+            imageView.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
+            selectedImage = imageView;
+            if(imageView.getId() == R.id.cat2) stickerId = String.valueOf(R.drawable.cat2);
+            else if(imageView.getId() == R.id.cat1) stickerId = String.valueOf(R.drawable.cat1);
+            Log.d("logInfo=:",stickerId);
+        }
+    };
 
     // Sends sticker to another user
     private void sendSticker(String senderUserName, String receiverUserName, String stickerId) {
@@ -242,5 +259,36 @@ public class SendStickerActivity extends AppCompatActivity {
         // TODO:
     }
 
+    public void sendNotification(View view) {
+        // Prepare intent which is triggered if the
+        // notification is selected
+        Intent intent = new Intent(this, ReceiveNotificationActivity.class);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, FLAG_IMMUTABLE);
+
+        PendingIntent callIntent = PendingIntent.getActivity(this, (int)System.currentTimeMillis(),
+                new Intent(this, ReceiveHistoryActivity.class), FLAG_IMMUTABLE);
+
+
+        // Build notification
+        // Actions are just fake
+        String channelId = getString(R.string.channel_id);
+
+//        Notification noti = new Notification.Builder(this)   DEPRECATED
+        Notification noti = new NotificationCompat.Builder(this,channelId)
+
+                .setContentTitle("New mail from " + "test@gmail.com")
+                .setContentText("Subject").setSmallIcon(R.drawable.ic_launcher_foreground)
+
+                .addAction(R.drawable.ic_launcher_foreground, "Call", callIntent).setContentIntent(pIntent).build();
+//                .addAction(R.drawable.icon, "More", pIntent)
+//              .addAction(R.drawable.icon, "And more", pIntent).build();
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // hide the notification after its selected
+        noti.flags |= Notification.FLAG_AUTO_CANCEL ;
+
+        notificationManager.notify(0, noti);
+    }
+    //notification end
 
 }
