@@ -54,10 +54,6 @@ public class UserActivity extends AppCompatActivity {
 
         // notification end
 
-        // Connects firebase
-//        GroupActivity.mDatabase = FirebaseDatabase.getInstance().getReference();
-        String loginUsername = getIntent().getStringExtra("login_username");
-
 
     }
 
@@ -99,7 +95,8 @@ public class UserActivity extends AppCompatActivity {
     public void sendNotification() {
         // Prepare intent which is triggered if the
         // notification is selected
-        Intent intent = new Intent(this, ReceiveHistoryActivity.class);
+        Intent intent = new Intent(this, UserActivity.class);
+        intent.putExtra("login_username", loginUsername);
         PendingIntent checkIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         // Build notification
@@ -109,12 +106,10 @@ public class UserActivity extends AppCompatActivity {
 //        Notification noti = new Notification.Builder(this)   DEPRECATED
         Notification noti = new NotificationCompat.Builder(this,channelId)
                 .setContentTitle("You got a new Sticker!")
-//                .setContentText("Subject")
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .addAction(R.drawable.ic_action_check, "CHECK", checkIntent)
-                .setContentIntent(checkIntent)
+                .setAutoCancel(true)
                 .build();
-
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // hide the notification after its selected
@@ -124,7 +119,6 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void getNewNotification(String userName) {
-
 
         GroupActivity.mDatabase.child(EVENT_TABLE)
                 .orderByChild(EVENT_RECEIVER)
@@ -139,7 +133,6 @@ public class UserActivity extends AppCompatActivity {
                             sendNotification();
                         }
 
-                        System.out.println(snapshot.toString() + "?????dayinlema");
                     }
 
                     @Override
