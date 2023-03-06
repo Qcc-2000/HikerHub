@@ -228,36 +228,6 @@ public class SendStickerActivity extends AppCompatActivity {
     }
 
 
-    public void getHistoryOfSentStickers(String userName) {
-        mDatabase.child(EVENT_TABLE).orderByChild(EVENT_SENDER).equalTo(userName).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        List<Event> eventHistory = new ArrayList<>();
-                        if (snapshot.hasChildren()) {
-                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                Event event = dataSnapshot.getValue(Event.class);
-                                eventHistory.add(event);
-                            }
-                            updateStatisticsView(eventHistory);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        //
-                    }
-                });
-
-    }
-
-    private void updateStatisticsView(List<Event> eventHistory) {
-        Map<String, Integer> countByStickerId = new HashMap<>();
-        for (Event event : eventHistory) {
-            countByStickerId.put(event.stickerId, countByStickerId.getOrDefault(event.stickerId, 0) + 1);
-        }
-        // TODO:
-    }
 
     public void sendNotification(View view) {
         // Prepare intent which is triggered if the
