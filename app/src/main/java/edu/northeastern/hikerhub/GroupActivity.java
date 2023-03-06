@@ -26,7 +26,7 @@ public class GroupActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String USER_TABLE = "Users";
     private String deviceFcmToken = "";
-    private DatabaseReference mDatabase;
+    public static DatabaseReference mDatabase;
 
 
     @Override
