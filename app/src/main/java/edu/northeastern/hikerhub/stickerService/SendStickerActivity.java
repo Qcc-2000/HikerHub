@@ -75,8 +75,12 @@ public class SendStickerActivity extends AppCompatActivity {
         //image
         ImageView ivCat1 = (ImageView) findViewById(R.id.cat1);
         ImageView ivCat2 = (ImageView) findViewById(R.id.cat2);
+        ImageView ivCat3 = (ImageView) findViewById(R.id.cat3);
+        ImageView ivCat4 = (ImageView) findViewById(R.id.cat4);
         ivCat1.setOnClickListener(clickListener);
         ivCat2.setOnClickListener(clickListener);
+        ivCat3.setOnClickListener(clickListener);
+        ivCat4.setOnClickListener(clickListener);
 //        ivCat1.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -144,6 +148,8 @@ public class SendStickerActivity extends AppCompatActivity {
             selectedImage = imageView;
             if(imageView.getId() == R.id.cat2) stickerId = String.valueOf(R.drawable.cat2);
             else if(imageView.getId() == R.id.cat1) stickerId = String.valueOf(R.drawable.cat1);
+            else if(imageView.getId() == R.id.cat3) stickerId = String.valueOf(R.drawable.cat3);
+            else stickerId = String.valueOf(R.drawable.cat4);
             Log.d("logInfo=:",stickerId);
         }
     };

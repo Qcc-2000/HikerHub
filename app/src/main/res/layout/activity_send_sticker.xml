@@ -46,6 +46,18 @@
         app:srcCompat="@drawable/cat1" />
 
     <ImageView
+        android:id="@+id/cat3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.807"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/receiver"
+        app:layout_constraintVertical_bias="0.156"
+        app:srcCompat="@drawable/cat3" />
+
+    <ImageView
         android:id="@+id/cat2"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -56,5 +68,17 @@
         app:layout_constraintTop_toBottomOf="@+id/cat1"
         app:layout_constraintVertical_bias="0.521"
         app:srcCompat="@drawable/cat2" />
+
+    <ImageView
+        android:id="@+id/cat4"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.807"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cat1"
+        app:layout_constraintVertical_bias="0.521"
+        app:srcCompat="@drawable/cat4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
