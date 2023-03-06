@@ -134,7 +134,12 @@ public class SendStickerActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             ImageView imageView = (ImageView) view;
-            if(selectedImage != null)  selectedImage.getDrawable().clearColorFilter();
+            if(selectedImage != null) {
+                selectedImage.getDrawable().clearColorFilter();
+                selectedImage = null;
+                stickerId = null;
+                return;
+            }
             imageView.getDrawable().setColorFilter(0x77000000, PorterDuff.Mode.SRC_ATOP);
             selectedImage = imageView;
             if(imageView.getId() == R.id.cat2) stickerId = String.valueOf(R.drawable.cat2);
