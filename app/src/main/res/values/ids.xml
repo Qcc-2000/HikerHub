@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="SlideUpLayoutBar" type="id" />
+    <item name="SlideUpLayout" type="id" />
+    <item name="SlideUpLayoutContent" type="id" />
+</resources>

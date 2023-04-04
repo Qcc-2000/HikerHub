@@ -3,6 +3,9 @@
     <string name="channel_name">Notification Name</string>
     <string name="channel_description">Notification Channel for the demo app</string>
     <string name="channel_id">Channel_Name_NUMAD_demo</string>
-
     <string name="send_notification_text">Send Android Notification</string>
+    <string name="google_map_key">AIzaSyDe1QJKCvZLVqBASBVxsr4ACADN4_ubl6Q</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

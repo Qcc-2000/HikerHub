@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startFirebaseActivity(View view){
-        startActivity(new Intent(this, FirebaseActivity.class));
+        startActivity(new Intent(this, HikeActivity.class));
     }
 
     public void startGroupProjectActivity(View view) {
@@ -28,4 +28,5 @@ public class MainActivity extends AppCompatActivity {
     public void startAboutActivity(View view) {
         startActivity(new Intent(this, AboutActivity.class));
     }
+
 }
