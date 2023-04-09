@@ -23,7 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HikerHub"
         tools:targetApi="31">
-
+        <activity
+            android:name=".TrailActivity"
+            android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 

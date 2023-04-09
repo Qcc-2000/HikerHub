@@ -2,9 +2,12 @@ package edu.northeastern.hikerhub;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import edu.northeastern.hikerhub.hiker.TrailActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     }
     public void startAboutActivity(View view) {
         startActivity(new Intent(this, AboutActivity.class));
+    }
+
+    public void startHikerActivity(View view) {
+        startActivity(new Intent(this, TrailActivity.class));
     }
 
 }
