@@ -8,4 +8,14 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">MapsActivity</string>
+
+
+    <string name="cd_home">Home</string>
+    <string name="cd_posts">Posts</string>
+    <string name="cd_navigation">Navigation</string>
+    <string name="cd_profile">Profile</string>
+    <string name="title_navigation">Navigation</string>
+    <string name="title_home">Home</string>
+    <string name="title_posts">Posts</string>
+    <string name="title_profile">Profile</string>
 </resources>
