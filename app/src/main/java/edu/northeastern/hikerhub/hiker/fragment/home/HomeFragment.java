@@ -6,12 +6,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.SearchEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,10 +18,10 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,7 +39,6 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.protobuf.DescriptorProtos;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
@@ -49,12 +47,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.stickerService.SendStickerActivity;
 
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
-
-    private RecyclerView trailsRecView;
-    private TrialRecViewAdapter trialRecViewAdapter;
+    private static final String TAG = HomeFragment.class.getSimpleName();
+    private RecyclerView topTrailsRecView;
+    private RecyclerView likeTrailsRecView;
+    private TrialRecViewAdapter topTrialRecViewAdapter;
+    private TrialRecViewAdapter likeTrialRecViewAdapter;
     private FloatingActionButton btnLoadMap;
     private CardView cardViewTrail;
     private SearchView searchView;
@@ -71,23 +72,36 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         initiate(rootView);
 
-        trialRecViewAdapter = new TrialRecViewAdapter(requireContext());
-        trailsRecView.setAdapter(trialRecViewAdapter);
-        trailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        topTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
+        likeTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
+        topTrailsRecView.setAdapter(topTrialRecViewAdapter);
+        topTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        ArrayList<Trail> trails = new ArrayList<>();
-        trails.add(new Trail("Rainer", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        trails.add(new Trail("Apple", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        trails.add(new Trail("PooPoint", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        trails.add(new Trail("Mount", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        trialRecViewAdapter.setTrails(trails);
+        likeTrailsRecView.setAdapter(likeTrialRecViewAdapter);
+        likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
+        ArrayList<Trail> topTrails = new ArrayList<>();
+        topTrails.add(new Trail("Rainer", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
+        topTrails.add(new Trail("Apple", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA7ym5GXtH17pPLo0IvWcIONsQVInEtLeMMg&usqp=CAU"));
+        topTrails.add(new Trail("PooPoint", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSE-rBbXlWXLtJPSrr8zml7wmyNa4oq-XuMg&usqp=CAU"));
+        topTrails.add(new Trail("Mount", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
+        topTrialRecViewAdapter.setTrails(topTrails);
+
+
+        ArrayList<Trail> likeTrails = new ArrayList<>();
+        likeTrails.add(new Trail("Rainer", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_9Ku1dlzfD_PY_qMDrPkAbiDjxO7zmvXDkQ&usqp=CAU"));
+        likeTrails.add(new Trail("Apple", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI0nP9Ya2iOgJSTxojgvH8T2WnTZ5FtzPq6A&usqp=CAU"));
+        likeTrails.add(new Trail("PooPoint", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDiaD-GUQxNcEAScbHWkNonHxkxV_GtAm-pA&usqp=CAU"));
+        likeTrails.add(new Trail("Mount", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-dMskgkBXsXJICaw2JGMqtt8PRtm-ywF9w&usqp=CAU"));
+
+        likeTrialRecViewAdapter.setTrails(likeTrails);
 
         return rootView;
     }
 
     private void initiate(View rootView) {
-        trailsRecView = rootView.findViewById(R.id.trailsRecView);
+        topTrailsRecView = rootView.findViewById(R.id.topTrailsRecView);
+        likeTrailsRecView = rootView.findViewById(R.id.likeTrailsRecView);
         btnLoadMap = rootView.findViewById(R.id.floatingLoadMap);
         searchView = rootView.findViewById(R.id.searchView);
         cardViewTrail = rootView.findViewById(R.id.parentTailMap);
@@ -118,16 +132,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         btnLoadMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (trailsRecView.getVisibility() == View.VISIBLE) {
+                if (topTrailsRecView.getVisibility() == View.VISIBLE) {
                     // Hide the RecyclerView and FloatingActionButton
-                    trailsRecView.setVisibility(View.GONE);
+                    topTrailsRecView.setVisibility(View.GONE);
+                    likeTrailsRecView.setVisibility(View.GONE);
                     btnLoadMap.setImageResource(R.drawable.ic_list);
                     // Show the map
                     mapFragment.getView().setVisibility(View.VISIBLE);
 
                 } else {
                     // Show the RecyclerView and FloatingActionButton
-                    trailsRecView.setVisibility(View.VISIBLE);
+                    topTrailsRecView.setVisibility(View.VISIBLE);
+                    likeTrailsRecView.setVisibility(View.VISIBLE);
                     searchView.setVisibility(View.VISIBLE);
                     btnLoadMap.setImageResource(R.drawable.ic_map);
                     // Hide the map
@@ -154,7 +170,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 if (cardViewTrail.getVisibility() == View.GONE) {
                     cardViewTrail.setVisibility(View.VISIBLE);
                     TextView titleTextView = cardViewTrail.findViewById(R.id.txtTrailNameMap);
+                    ImageView imgTrailMap = cardViewTrail.findViewById(R.id.imgTrailMap);
                     titleTextView.setText(marker.getTitle());
+                    Glide.with(requireContext())
+                            .asBitmap()
+                            .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA7ym5GXtH17pPLo0IvWcIONsQVInEtLeMMg&usqp=CAU")
+                            .into(imgTrailMap);
                 } else {
                     cardViewTrail.setVisibility(View.GONE);
                 }
@@ -192,7 +213,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                                 // Move the camera to the new location
                                                 CameraPosition cameraPosition = new CameraPosition.Builder()
                                                         .target(latLng)
-                                                        .zoom(15)
+                                                        .zoom(12)
                                                         .build();
                                                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                                             }
@@ -223,7 +244,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     if (location != null) {
                         lastKnownLocation = location;
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        Log.e("Location:", location.toString());
                         myMap.addMarker(new MarkerOptions().position(latLng).title("Issaquah"));
                         myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
                     }
