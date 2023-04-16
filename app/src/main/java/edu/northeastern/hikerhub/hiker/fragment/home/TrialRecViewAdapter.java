@@ -44,7 +44,7 @@ public class TrialRecViewAdapter extends RecyclerView.Adapter<TrialRecViewAdapte
                 .asBitmap()
                 .load(trails.get(position).getImageUrl())
                 .into(holder.imgTrail);
-        holder.parent.setOnClickListener(new View.OnClickListener() {
+        holder.parentTail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(mContext, trails.get(position).getName() + " Selected", Toast.LENGTH_SHORT).show();
@@ -63,14 +63,14 @@ public class TrialRecViewAdapter extends RecyclerView.Adapter<TrialRecViewAdapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView parent;
+        private CardView parentTail;
         private ImageView imgTrail;
         private TextView txtTrailName;
 
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            parent = itemView.findViewById(R.id.parent);
+            parentTail = itemView.findViewById(R.id.parentTail);
             imgTrail = itemView.findViewById(R.id.imgTrail);
             txtTrailName = itemView.findViewById(R.id.txtTrailName);
         }
