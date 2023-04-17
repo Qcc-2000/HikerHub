@@ -2,35 +2,46 @@ package edu.northeastern.hikerhub.hiker.fragment.home;
 
 import android.location.Location;
 
+import com.google.protobuf.DescriptorProtos;
+
 public class Trail {
-    private int id;
     private String name;
-    private Location location;
+    private double x;
+    private double y;
     private double length;
+    private Location location;
     private long time;
     private String imageUrl;
     private int rate;
+    private int recommendCount;
     public static final double AVERAGE_HIKING_SPEED_MPH = 2.5; // average hiking speed in miles per hour
 
-    private Difficulty difficulty;
-    private String description;
+    private Difficulty difficulty = Difficulty.EASY;;
 
-
-    public Trail(int id, String name, int x, int y, double length) {
-        this.id = id;
+    public Trail() {}
+    public Trail(double x, double y, String name, double length) {
+        this.x = x;
+        this.y = y;
         this.name = name;
-        this.location = location;
         this.length = length;
+        this.location = new Location("");
+        this.location.setLatitude(x);
+        this.location.setLatitude(y);
         this.time = calculateTimeTaken(length);
 
+        int hours = (int) (time / (60 * 60)); // convert to hours
+        if (hours >= 1 && hours < 2) {
+            this.difficulty = Difficulty.MODERATE;
+        } else if (hours >= 2){
+            this.difficulty = Difficulty.HARD;
+        }
     }
 
-    private static long calculateTimeTaken(double trailLength) {
+    private long calculateTimeTaken(double trailLength) {
         double distanceInMiles = trailLength; // distance in miles
         double speedInMph = AVERAGE_HIKING_SPEED_MPH; // speed in miles per hour
         double timeInHours = distanceInMiles / speedInMph; // time taken in hours
-        long timeInseconds = (long) (timeInHours * 60 * 60); // convert to seconds
-        return timeInseconds;
+        return (long) (timeInHours * 60 * 60);// convert to seconds
     }
     public String getTimeStr() {
         int hours = (int) (time / (60 * 60)); // convert to hours
@@ -44,20 +55,16 @@ public class Trail {
         this.imageUrl = imageUrl;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLenAndTime() {
+        return String.format("%.2f", length) +"mi Est." + getTimeStr();
     }
 
     public Location getLocation() {
@@ -68,56 +75,22 @@ public class Trail {
         this.location = location;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getRating() {
-        return rate;
-    }
-
-    public void setRating(int rate) {
-        this.rate = rate;
-    }
-
-    public double getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
     public Difficulty getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(Difficulty difficulty) {
-        this.difficulty = difficulty;
+    public int getRecommendCount() {
+        return recommendCount;
     }
 
     @Override
     public String toString() {
         return "Trail{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", location=" + location +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", description='" + description + '\'' +
-                ", rating=" + rate +
+                "name='" + name + '\'' +
+                ", x=" + x +
+                ", y=" + y +
                 ", length=" + length +
+                ", time=" + time +
                 ", difficulty=" + difficulty +
                 '}';
     }

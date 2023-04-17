@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -26,8 +27,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -44,7 +47,10 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 import edu.northeastern.hikerhub.R;
 import edu.northeastern.hikerhub.stickerService.SendStickerActivity;
@@ -60,6 +66,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private CardView cardViewTrail;
     private SearchView searchView;
 
+    private Map<String, Trail> trailMap;
+
     private GoogleMap myMap;
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -71,30 +79,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         initiate(rootView);
-
-        topTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
-        likeTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
-        topTrailsRecView.setAdapter(topTrialRecViewAdapter);
-        topTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        likeTrailsRecView.setAdapter(likeTrialRecViewAdapter);
-        likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        ArrayList<Trail> topTrails = new ArrayList<>();
-        topTrails.add(new Trail("Rainer", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        topTrails.add(new Trail("Apple", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA7ym5GXtH17pPLo0IvWcIONsQVInEtLeMMg&usqp=CAU"));
-        topTrails.add(new Trail("PooPoint", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSE-rBbXlWXLtJPSrr8zml7wmyNa4oq-XuMg&usqp=CAU"));
-        topTrails.add(new Trail("Mount", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3QG3OrPdZnkd-PBMrdWIrhqcqkfMSFdBSAA&usqp=CAU"));
-        topTrialRecViewAdapter.setTrails(topTrails);
-
-
-        ArrayList<Trail> likeTrails = new ArrayList<>();
-        likeTrails.add(new Trail("Rainer", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_9Ku1dlzfD_PY_qMDrPkAbiDjxO7zmvXDkQ&usqp=CAU"));
-        likeTrails.add(new Trail("Apple", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI0nP9Ya2iOgJSTxojgvH8T2WnTZ5FtzPq6A&usqp=CAU"));
-        likeTrails.add(new Trail("PooPoint", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDiaD-GUQxNcEAScbHWkNonHxkxV_GtAm-pA&usqp=CAU"));
-        likeTrails.add(new Trail("Mount", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu-dMskgkBXsXJICaw2JGMqtt8PRtm-ywF9w&usqp=CAU"));
-
-        likeTrialRecViewAdapter.setTrails(likeTrails);
+        initRecViewData();
 
         return rootView;
     }
@@ -106,6 +91,66 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         searchView = rootView.findViewById(R.id.searchView);
         cardViewTrail = rootView.findViewById(R.id.parentTailMap);
         cardViewTrail.setVisibility(View.GONE);
+        trailMap = CsvReader.readCsvFromAssets(getContext(),"trail.csv");
+    }
+
+    private void initRecViewData() {
+        topTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
+        topTrailsRecView.setAdapter(topTrialRecViewAdapter);
+        topTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        likeTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
+        likeTrailsRecView.setAdapter(likeTrialRecViewAdapter);
+        likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        ArrayList<Trail> topTrails = new ArrayList<>();
+        //TODO：get the current location for user
+        double latitude = 47.5301011;
+        double longitude = -122.0326191;
+        Location currentLocation = new Location("");
+        currentLocation.setLatitude(latitude);
+        currentLocation.setLongitude(longitude);
+
+
+        //location.distanceTo(previousLocation);
+        //max heap
+        PriorityQueue<String> nearbyTrailHeap = new PriorityQueue<>((a, b) -> {
+            float dist1 = trailMap.get(a).getLocation().distanceTo(currentLocation);
+            float dist2 = trailMap.get(b).getLocation().distanceTo(currentLocation);
+            if (dist1 > dist2) {
+                return -1;
+            } else if (dist1 < dist2) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        int size = 10;
+        for (String nameTrail : trailMap.keySet()) {
+            nearbyTrailHeap.offer(nameTrail);
+            if (nearbyTrailHeap.size() > size) {
+                nearbyTrailHeap.poll();
+            }
+        }
+        while (!nearbyTrailHeap.isEmpty()) {
+            topTrails.add(0,trailMap.get(nearbyTrailHeap.poll()));
+        }
+
+        topTrialRecViewAdapter.setTrails(topTrails);
+
+        ArrayList<Trail> likeTrails = new ArrayList<>();
+        //min Heap
+        PriorityQueue<Trail> mostLikeTrailHeap = new PriorityQueue<>(Comparator.comparingInt(Trail::getRecommendCount));
+        for (Trail trail : trailMap.values()) {
+            mostLikeTrailHeap.offer(trail);
+            if (mostLikeTrailHeap.size() > size) {
+                mostLikeTrailHeap.poll();
+            }
+        }
+        while (!mostLikeTrailHeap.isEmpty()) {
+            likeTrails.add(0, mostLikeTrailHeap.poll());
+        }
+        likeTrialRecViewAdapter.setTrails(likeTrails);
     }
 
     @Override

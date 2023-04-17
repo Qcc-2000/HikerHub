@@ -18,6 +18,18 @@
             android:layout_height="150dp"
             android:id="@+id/imgTrail"
             android:src="@drawable/ic_launcher_background"/>
+
+        <TextView
+            android:id="@+id/txtTrailDifficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imgTrail"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:text="Difficulty"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
         <TextView
             android:id="@+id/txtTrailName"
             android:layout_width="wrap_content"
@@ -25,9 +37,19 @@
             android:text="Trail Name"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:layout_below="@+id/imgTrail"
+            android:layout_below="@+id/txtTrailDifficulty"
             android:layout_marginTop="5dp"
-            android:layout_centerHorizontal="true"/>
+            android:layout_marginLeft="5dp"/>
+        <TextView
+            android:id="@+id/txtTrailLenTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.0 mi Est.3h4m"
+            android:textSize="12sp"
+            android:layout_below="@+id/txtTrailName"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"/>
 
 
     </RelativeLayout>

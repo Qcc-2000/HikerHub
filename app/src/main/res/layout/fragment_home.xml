@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
@@ -18,54 +20,93 @@
         app:layout_constraintTop_toTopOf="parent"
         app:cardCornerRadius="20dp"
         app:cardElevation="10dp"
-        android:queryHint="Find trails"/>
+        android:queryHint="Find trails">
 
-    <TextView
-        android:id="@+id/txtTopTrails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Top Trails Nearby"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+    </SearchView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/topTrailsRecView"
+    <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/txtTopTrails"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_marginTop="16sp"
+        android:paddingBottom="70dp"
+        app:layout_constraintTop_toBottomOf="@+id/searchView">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtTopTrails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Top Trails Nearby"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/topTrailsRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtTopTrails"
+                android:layout_marginTop="16dp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@+id/txtTopTrails"
+                tools:layout_editor_absoluteX="0dp">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/txtLikeTrails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/topTrailsRecView"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Most Like Trails"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/likeTrailsRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtLikeTrails"
+                android:layout_marginTop="16dp"
+                android:visibility="visible">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </RelativeLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingLoadMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="#828282"
+        android:backgroundTint="#27D507"
         android:src="@drawable/ic_map"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="visible"/>
+        android:layout_marginBottom="50dp"/>
 
     <com.google.android.material.card.MaterialCardView
 
         android:id="@+id/parentTailMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp">
+        app:layout_constraintStart_toStartOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -75,21 +116,21 @@
                 android:id="@+id/imgTrailMap"
                 android:layout_width="200dp"
                 android:layout_height="120dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:src="@drawable/ic_launcher_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/txtTrailNameMap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/imgTrailMap"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/imgTrailMap"
                 android:text="Trail Name"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -98,28 +139,6 @@
         </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
-
-    <TextView
-        android:id="@+id/txtLikeTrails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Most Like Trails"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topTrailsRecView" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/likeTrailsRecView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtLikeTrails" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
