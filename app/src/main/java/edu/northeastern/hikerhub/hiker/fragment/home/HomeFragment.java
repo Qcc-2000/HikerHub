@@ -1,5 +1,6 @@
 package edu.northeastern.hikerhub.hiker.fragment.home;
 
+import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,10 +28,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -44,19 +43,21 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import edu.northeastern.hikerhub.R;
-import edu.northeastern.hikerhub.stickerService.SendStickerActivity;
 
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback {
+public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private static final String TAG = HomeFragment.class.getSimpleName();
     private RecyclerView topTrailsRecView;
     private RecyclerView likeTrailsRecView;
@@ -66,7 +67,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private CardView cardViewTrail;
     private SearchView searchView;
 
-    private Map<String, Trail> trailMap;
+    private Utils utils;
+    private Map<String, Trail> allTrails;
+    private final String PATHNAME = "trail.csv";
 
     private GoogleMap myMap;
     private SupportMapFragment mapFragment;
@@ -91,7 +94,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         searchView = rootView.findViewById(R.id.searchView);
         cardViewTrail = rootView.findViewById(R.id.parentTailMap);
         cardViewTrail.setVisibility(View.GONE);
-        trailMap = CsvReader.readCsvFromAssets(getContext(),"trail.csv");
+
+        utils = Utils.getInstance(getContext(), PATHNAME);
+        allTrails = utils.getAllTrails();
     }
 
     private void initRecViewData() {
@@ -103,54 +108,14 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         likeTrailsRecView.setAdapter(likeTrialRecViewAdapter);
         likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        ArrayList<Trail> topTrails = new ArrayList<>();
         //TODO：get the current location for user
         double latitude = 47.5301011;
         double longitude = -122.0326191;
-        Location currentLocation = new Location("");
-        currentLocation.setLatitude(latitude);
-        currentLocation.setLongitude(longitude);
-
-
-        //location.distanceTo(previousLocation);
-        //max heap
-        PriorityQueue<String> nearbyTrailHeap = new PriorityQueue<>((a, b) -> {
-            float dist1 = trailMap.get(a).getLocation().distanceTo(currentLocation);
-            float dist2 = trailMap.get(b).getLocation().distanceTo(currentLocation);
-            if (dist1 > dist2) {
-                return -1;
-            } else if (dist1 < dist2) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        int size = 10;
-        for (String nameTrail : trailMap.keySet()) {
-            nearbyTrailHeap.offer(nameTrail);
-            if (nearbyTrailHeap.size() > size) {
-                nearbyTrailHeap.poll();
-            }
-        }
-        while (!nearbyTrailHeap.isEmpty()) {
-            topTrails.add(0,trailMap.get(nearbyTrailHeap.poll()));
-        }
-
+        List<Trail> topTrails = utils.getTopTrails(latitude, longitude);
         topTrialRecViewAdapter.setTrails(topTrails);
 
-        ArrayList<Trail> likeTrails = new ArrayList<>();
-        //min Heap
-        PriorityQueue<Trail> mostLikeTrailHeap = new PriorityQueue<>(Comparator.comparingInt(Trail::getRecommendCount));
-        for (Trail trail : trailMap.values()) {
-            mostLikeTrailHeap.offer(trail);
-            if (mostLikeTrailHeap.size() > size) {
-                mostLikeTrailHeap.poll();
-            }
-        }
-        while (!mostLikeTrailHeap.isEmpty()) {
-            likeTrails.add(0, mostLikeTrailHeap.poll());
-        }
-        likeTrialRecViewAdapter.setTrails(likeTrails);
+        List<Trail> mostListTrails = utils.getMostLikeTrails();
+        likeTrialRecViewAdapter.setTrails(mostListTrails);
     }
 
     @Override
@@ -196,10 +161,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             }
         });
+        cardViewTrail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cardViewTrail.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "cardView is missing", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        Log.e(TAG, "onMapReady");
         // The map is ready, so it is safe to call getView() and hide the map.
         mapFragment.getView().setVisibility(View.GONE);
         myMap = googleMap;
@@ -207,28 +181,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 //        LatLng sydney = new LatLng(-34, 151);
 //        myMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //        myMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
         markerCurrentLocation();
-
-        myMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (cardViewTrail.getVisibility() == View.GONE) {
-                    cardViewTrail.setVisibility(View.VISIBLE);
-                    TextView titleTextView = cardViewTrail.findViewById(R.id.txtTrailNameMap);
-                    ImageView imgTrailMap = cardViewTrail.findViewById(R.id.imgTrailMap);
-                    titleTextView.setText(marker.getTitle());
-                    Glide.with(requireContext())
-                            .asBitmap()
-                            .load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA7ym5GXtH17pPLo0IvWcIONsQVInEtLeMMg&usqp=CAU")
-                            .into(imgTrailMap);
-                } else {
-                    cardViewTrail.setVisibility(View.GONE);
-                }
-
-
-                return false;
-            }
-        });
+        markerAllTrails();
 
 
         // Set a listener to the SearchView widget
@@ -275,7 +231,82 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+    }
 
+
+    private void markerAllTrails() {
+//        for (Trail trail : allTrails.values()) {
+//            LatLng latLng = new LatLng(trail.getLatitude(), trail.getLongitude());
+//            myMap.addMarker(new MarkerOptions().position(latLng).title(trail.getName()).snippet("Click for more information"));
+//        }
+
+        List<MarkerItem> markerItems = new ArrayList<>();
+
+        for (Trail trail : allTrails.values()) {
+            MarkerItem item = new MarkerItem(trail.getLatitude(), trail.getLongitude(),trail.getName());
+            markerItems.add(item);
+        }
+        // Set up the ClusterManager
+        ClusterManager<MarkerItem> clusterManager = new ClusterManager<MarkerItem>(getContext(), myMap);
+        clusterManager.addItems(markerItems);
+        clusterManager.setAnimation(false); // Disable clustering animation
+        clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<MarkerItem>()); // Use a non-hierarchical clustering algorithm
+        clusterManager.setRenderer(new DefaultClusterRenderer<MarkerItem>(getContext(), myMap, clusterManager)); // Use the default renderer
+
+        // Set the click listener for individual markers
+        //myMap.setOnMarkerClickListener(clusterManager);
+        myMap.setOnCameraIdleListener(clusterManager);
+//        clusterManager.setOnClusterItemClickListener(item -> {
+//            Log.e(TAG, "onClusterItemClick is called================");
+//            cardViewTrail.setVisibility(View.VISIBLE);
+//            TextView txtTitle = cardViewTrail.findViewById(R.id.txtTrailNameMap);
+//            TextView txtLenTime = cardViewTrail.findViewById(R.id.txtTrailLenTimeMap);
+//            TextView txtDifficulty = cardViewTrail.findViewById(R.id.txtTrailDifficultyMap);
+//            ImageView imgTrailMap = cardViewTrail.findViewById(R.id.imgTrailMap);
+//            txtTitle.setText(item.getTitle());
+//
+//
+//            String nameTrail = item.getTitle();
+//            Trail trail = allTrails.get(nameTrail);
+//            txtLenTime.setText(trail.getLenAndTime());
+//            txtDifficulty.setText(trail.getDifficulty().toString());
+//
+//            Glide.with(requireContext())
+//                    .asBitmap()
+//                    .load(trail.getImgUrl())
+//                    .into(imgTrailMap);
+//
+//            Toast.makeText(getContext(), "this marker is selected", Toast.LENGTH_LONG).show();
+//
+//            return true;
+//        });
+
+//        myMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        // Set an info window click listener on the cluster manager
+        clusterManager.setOnClusterItemInfoWindowClickListener(item -> {
+            Log.e(TAG, "onClusterItemInfoWindowClick is called================");
+            cardViewTrail.setVisibility(View.VISIBLE);
+            TextView txtTitle = cardViewTrail.findViewById(R.id.txtTrailNameMap);
+            TextView txtLenTime = cardViewTrail.findViewById(R.id.txtTrailLenTimeMap);
+            TextView txtDifficulty = cardViewTrail.findViewById(R.id.txtTrailDifficultyMap);
+            ImageView imgTrailMap = cardViewTrail.findViewById(R.id.imgTrailMap);
+            txtTitle.setText(item.getTitle());
+
+
+            String nameTrail = item.getTitle();
+            Trail trail = allTrails.get(nameTrail);
+            txtLenTime.setText(trail.getLenAndTime());
+            txtDifficulty.setText(trail.getDifficulty().toString());
+
+            Glide.with(requireContext())
+                    .asBitmap()
+                    .load(trail.getImgUrl())
+                    .into(imgTrailMap);
+            Toast.makeText(getContext(), item.getTitle() + " clicked", Toast.LENGTH_LONG).show();
+        });
+        // Register the ClusterManager as the click listener for markers
+        myMap.setOnInfoWindowClickListener(clusterManager);
+        clusterManager.cluster();
 
     }
     private void markerCurrentLocation() {
@@ -289,7 +320,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     if (location != null) {
                         lastKnownLocation = location;
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        myMap.addMarker(new MarkerOptions().position(latLng).title("Issaquah"));
+                        //myMap.addMarker(new MarkerOptions().position(latLng).title("Issaquah"));
                         myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
                     }
                 }
@@ -300,5 +331,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         }
     }
+
+
 }
 

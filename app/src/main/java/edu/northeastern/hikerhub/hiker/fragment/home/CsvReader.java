@@ -37,11 +37,12 @@ public class CsvReader {
                     continue;
                 }
                 // Process the next line of the CSV file
-                double x = Double.parseDouble(nextLine[0]);
-                double y = Double.parseDouble(nextLine[1]);
+
                 String name = nextLine[2];
                 double length = Double.parseDouble(nextLine[3]);
-                Trail trail = new Trail(x,y,name,length);
+                double longitude = Double.parseDouble(nextLine[4]);
+                double latitude = Double.parseDouble(nextLine[5]);
+                Trail trail = new Trail(latitude,longitude,name,length);
                 trailMap.put(name, trail);
                 num++;
             }

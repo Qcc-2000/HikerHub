@@ -2,32 +2,33 @@ package edu.northeastern.hikerhub.hiker.fragment.home;
 
 import android.location.Location;
 
-import com.google.protobuf.DescriptorProtos;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Trail {
     private String name;
-    private double x;
-    private double y;
+    private double latitude;
+    private double longitude;
     private double length;
     private Location location;
     private long time;
-    private String imageUrl;
-    private int rate;
+    private String imgUrl;
     private int recommendCount;
     public static final double AVERAGE_HIKING_SPEED_MPH = 2.5; // average hiking speed in miles per hour
 
-    private Difficulty difficulty = Difficulty.EASY;;
+    private Difficulty difficulty = Difficulty.EASY;
 
     public Trail() {}
     public Trail(double x, double y, String name, double length) {
-        this.x = x;
-        this.y = y;
+        this.latitude = x;
+        this.longitude = y;
         this.name = name;
         this.length = length;
         this.location = new Location("");
         this.location.setLatitude(x);
         this.location.setLatitude(y);
         this.time = calculateTimeTaken(length);
+        this.imgUrl = ImgUrlGenerator.getInstance().getImgUrl();
 
         int hours = (int) (time / (60 * 60)); // convert to hours
         if (hours >= 1 && hours < 2) {
@@ -35,7 +36,9 @@ public class Trail {
         } else if (hours >= 2){
             this.difficulty = Difficulty.HARD;
         }
+
     }
+
 
     private long calculateTimeTaken(double trailLength) {
         double distanceInMiles = trailLength; // distance in miles
@@ -50,9 +53,8 @@ public class Trail {
         return timeStr;
     }
 
-    public Trail(String name, String imageUrl) {
-        this.name = name;
-        this.imageUrl = imageUrl;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
     public String getName() {
@@ -70,11 +72,6 @@ public class Trail {
     public Location getLocation() {
         return location;
     }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
     public Difficulty getDifficulty() {
         return difficulty;
     }
@@ -83,14 +80,24 @@ public class Trail {
         return recommendCount;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
     @Override
     public String toString() {
         return "Trail{" +
                 "name='" + name + '\'' +
-                ", x=" + x +
-                ", y=" + y +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", length=" + length +
+                ", location=" + location +
                 ", time=" + time +
+                ", recommendCount=" + recommendCount +
                 ", difficulty=" + difficulty +
                 '}';
     }

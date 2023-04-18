@@ -116,8 +116,8 @@
                 android:id="@+id/imgTrailMap"
                 android:layout_width="200dp"
                 android:layout_height="120dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/ic_launcher_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -128,13 +128,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:layout_toRightOf="@+id/imgTrailMap"
                 android:text="Trail Name"
                 android:textSize="16sp"
                 android:textStyle="bold" />
-
+            <TextView
+                android:id="@+id/txtTrailLenTimeMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/txtTrailNameMap"
+                android:layout_marginTop="7dp"
+                android:layout_toRightOf="@+id/imgTrailMap"
+                android:text="Trail len + time"
+                android:textSize="12sp"/>
+            <TextView
+                android:id="@+id/txtTrailDifficultyMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/txtTrailLenTimeMap"
+                android:layout_marginTop="7dp"
+                android:layout_toRightOf="@+id/imgTrailMap"
+                android:text="Trail Difficulty"
+                android:textSize="12sp"/>
 
         </RelativeLayout>
 
