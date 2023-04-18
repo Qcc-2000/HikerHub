@@ -235,11 +235,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
 
     private void markerAllTrails() {
-//        for (Trail trail : allTrails.values()) {
-//            LatLng latLng = new LatLng(trail.getLatitude(), trail.getLongitude());
-//            myMap.addMarker(new MarkerOptions().position(latLng).title(trail.getName()).snippet("Click for more information"));
-//        }
-
         List<MarkerItem> markerItems = new ArrayList<>();
 
         for (Trail trail : allTrails.values()) {
@@ -253,35 +248,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<MarkerItem>()); // Use a non-hierarchical clustering algorithm
         clusterManager.setRenderer(new DefaultClusterRenderer<MarkerItem>(getContext(), myMap, clusterManager)); // Use the default renderer
 
-        // Set the click listener for individual markers
-        //myMap.setOnMarkerClickListener(clusterManager);
-        myMap.setOnCameraIdleListener(clusterManager);
-//        clusterManager.setOnClusterItemClickListener(item -> {
-//            Log.e(TAG, "onClusterItemClick is called================");
-//            cardViewTrail.setVisibility(View.VISIBLE);
-//            TextView txtTitle = cardViewTrail.findViewById(R.id.txtTrailNameMap);
-//            TextView txtLenTime = cardViewTrail.findViewById(R.id.txtTrailLenTimeMap);
-//            TextView txtDifficulty = cardViewTrail.findViewById(R.id.txtTrailDifficultyMap);
-//            ImageView imgTrailMap = cardViewTrail.findViewById(R.id.imgTrailMap);
-//            txtTitle.setText(item.getTitle());
-//
-//
-//            String nameTrail = item.getTitle();
-//            Trail trail = allTrails.get(nameTrail);
-//            txtLenTime.setText(trail.getLenAndTime());
-//            txtDifficulty.setText(trail.getDifficulty().toString());
-//
-//            Glide.with(requireContext())
-//                    .asBitmap()
-//                    .load(trail.getImgUrl())
-//                    .into(imgTrailMap);
-//
-//            Toast.makeText(getContext(), "this marker is selected", Toast.LENGTH_LONG).show();
-//
-//            return true;
-//        });
-
-//        myMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
         // Set an info window click listener on the cluster manager
         clusterManager.setOnClusterItemInfoWindowClickListener(item -> {
             Log.e(TAG, "onClusterItemInfoWindowClick is called================");
@@ -306,8 +272,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         });
         // Register the ClusterManager as the click listener for markers
         myMap.setOnInfoWindowClickListener(clusterManager);
+        myMap.setOnCameraIdleListener(clusterManager);
         clusterManager.cluster();
-
     }
     private void markerCurrentLocation() {
         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
