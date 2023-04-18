@@ -1,6 +1,5 @@
 package edu.northeastern.hikerhub.hiker.fragment.home;
 
-import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -70,6 +69,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private Utils utils;
     private Map<String, Trail> allTrails;
     private final String PATHNAME = "trail.csv";
+    private List<Trail> topTrails;
 
     private GoogleMap myMap;
     private SupportMapFragment mapFragment;
@@ -109,9 +109,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         //TODO：get the current location for user
-        double latitude = 47.5301011;
+        double latitude = 46.5301011;
         double longitude = -122.0326191;
-        List<Trail> topTrails = utils.getTopTrails(latitude, longitude);
+        topTrails = utils.getTopTrails(latitude, longitude);
         topTrialRecViewAdapter.setTrails(topTrails);
 
         List<Trail> mostListTrails = utils.getMostLikeTrails();
@@ -177,15 +177,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         // The map is ready, so it is safe to call getView() and hide the map.
         mapFragment.getView().setVisibility(View.GONE);
         myMap = googleMap;
-        // Add a marker in Sydney, Australia and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        myMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        myMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
 
         markerCurrentLocation();
         markerAllTrails();
-
 
         // Set a listener to the SearchView widget
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -218,10 +212,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                                                         .build();
                                                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                                             }
+
+                                            Log.e(TAG, "topTrailsRecView =====================");
+                                            topTrails = utils.getTopTrails(latLng.latitude, latLng.longitude);
+                                            // Update the adapter with the new list of top trails
+                                            topTrialRecViewAdapter.setTrails(topTrails);
+                                            // Notify the adapter of the changes
+                                            topTrialRecViewAdapter.notifyDataSetChanged();
                                         });
                             }
                         });
-
                 return true;
             }
 

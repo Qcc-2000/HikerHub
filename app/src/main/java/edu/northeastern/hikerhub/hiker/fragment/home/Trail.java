@@ -19,14 +19,14 @@ public class Trail {
     private Difficulty difficulty = Difficulty.EASY;
 
     public Trail() {}
-    public Trail(double x, double y, String name, double length) {
-        this.latitude = x;
-        this.longitude = y;
+    public Trail(double latitude, double longitude, String name, double length) {
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.name = name;
         this.length = length;
         this.location = new Location("");
-        this.location.setLatitude(x);
-        this.location.setLatitude(y);
+        this.location.setLatitude(latitude);
+        this.location.setLongitude(longitude);
         this.time = calculateTimeTaken(length);
         this.imgUrl = ImgUrlGenerator.getInstance().getImgUrl();
 
@@ -98,11 +98,7 @@ public class Trail {
                 "name='" + name + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", length=" + length +
                 ", location=" + location +
-                ", time=" + time +
-                ", recommendCount=" + recommendCount +
-                ", difficulty=" + difficulty +
                 '}';
     }
 }

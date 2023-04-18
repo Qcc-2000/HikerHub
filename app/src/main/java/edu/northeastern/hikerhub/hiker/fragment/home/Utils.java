@@ -38,11 +38,11 @@ public class Utils {
 
         //max heap
         PriorityQueue<Trail> nearbyTrailHeap = new PriorityQueue<>((t1, t2) -> {
-            float dist1 = t1.getLocation().distanceTo(currentLocation);
-            float dist2 = t2.getLocation().distanceTo(currentLocation);
-            if (dist1 > dist2) {
+            float distInMeters1 = t1.getLocation().distanceTo(currentLocation);
+            float distInMeters2 = t2.getLocation().distanceTo(currentLocation);
+            if (distInMeters1 > distInMeters2) {
                 return -1;
-            } else if (dist1 < dist2) {
+            } else if (distInMeters1 < distInMeters2) {
                 return 1;
             } else {
                 return 0;
