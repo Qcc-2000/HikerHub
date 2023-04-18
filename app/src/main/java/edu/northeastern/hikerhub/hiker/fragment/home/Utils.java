@@ -11,9 +11,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class Utils {
-    private static Utils instance;
+    private static Utils instance = null;
     private static Map<String, Trail> allTrails;//key: trail name
-    private List<String> imgUrlList = new ArrayList<>();
     private Utils(Context context, String pathName) {
         allTrails = new HashMap<>();
         initData(context, pathName);

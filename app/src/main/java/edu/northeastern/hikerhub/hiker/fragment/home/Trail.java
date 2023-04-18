@@ -80,6 +80,10 @@ public class Trail {
         return recommendCount;
     }
 
+    public void setRecommendCount(int recommendCount) {
+        this.recommendCount = recommendCount;
+    }
+
     public double getLatitude() {
         return latitude;
     }
