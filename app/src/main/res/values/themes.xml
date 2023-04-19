@@ -13,11 +13,31 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="MyCustomDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/</item>
-        <item name="android:windowBackground">@drawable/your_background</item>
-        <item name="android:textColor">@color/your_text_color</item>
-        <!-- Add more attributes here -->
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- Custom Dialog Style -->
+    <style name="CustomDialogStyle" parent="@style/ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="buttonBarPositiveButtonStyle">@style/CustomPositiveButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomNegativeButtonStyle</item>
+    </style>
+
+    <!-- Custom Positive Button Style -->
+    <style name="CustomPositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <!-- Custom Negative Button Style -->
+    <style name="CustomNegativeButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
 </resources>
