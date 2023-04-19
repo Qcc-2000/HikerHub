@@ -41,18 +41,19 @@ public class TrialRecViewAdapter extends RecyclerView.Adapter<TrialRecViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: Called");
-        holder.txtTrailDifficulty.setText(trails.get(position).getDifficulty().toString());
-        holder.txtTrailName.setText(trails.get(position).getName());
-        holder.txtTrailLenTime.setText(trails.get(position).getLenAndTime());
+        Trail trail = trails.get(position);
+        holder.txtTrailDifficulty.setText(trail.getDifficulty().toString());
+        holder.txtTrailName.setText(trail.getName());
+        holder.txtTrailLenTime.setText(trail.getLenAndTime());
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(trails.get(position).getImgUrl())
+                .load(trail.getImgUrl())
                 .into(holder.imgTrail);
         holder.parentTail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, trails.get(position).getName() + " Selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, trail.getName() + " Selected", Toast.LENGTH_SHORT).show();
             }
         });
     }

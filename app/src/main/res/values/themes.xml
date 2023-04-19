@@ -14,9 +14,9 @@
         <!-- Customize your theme here. -->
     </style>
     <style name="MyCustomDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorAccent">@color/</item>
-        <item name="android:windowBackground">@drawable/your_background</item>
-        <item name="android:textColor">@color/your_text_color</item>
+<!--        <item name="colorAccent">@color/</item>-->
+<!--        <item name="android:windowBackground">@drawable/your_background</item>-->
+<!--        <item name="android:textColor">@color/your_text_color</item>-->
         <!-- Add more attributes here -->
     </style>
 
