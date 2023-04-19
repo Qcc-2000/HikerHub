@@ -246,7 +246,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         clusterManager.addItems(markerItems);
         clusterManager.setAnimation(false); // Disable clustering animation
         clusterManager.setAlgorithm(new NonHierarchicalDistanceBasedAlgorithm<MarkerItem>()); // Use a non-hierarchical clustering algorithm
-        clusterManager.setRenderer(new DefaultClusterRenderer<MarkerItem>(getContext(), myMap, clusterManager)); // Use the default renderer
+
+        // Set the custom renderer on the cluster manager
+        CustomClusterRenderer<MarkerItem> renderer = new CustomClusterRenderer<>(getContext(), myMap, clusterManager);
+        clusterManager.setRenderer(renderer);
+        //clusterManager.setRenderer(new DefaultClusterRenderer<MarkerItem>(getContext(), myMap, clusterManager)); // Use the default renderer
 
         // Set an info window click listener on the cluster manager
         clusterManager.setOnClusterItemInfoWindowClickListener(item -> {
