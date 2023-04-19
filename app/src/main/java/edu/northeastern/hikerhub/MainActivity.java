@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import edu.northeastern.hikerhub.hiker.TrailActivity;
+import edu.northeastern.hikerhub.hiker.fragment.auth.AuthActivity;
+import edu.northeastern.hikerhub.hiker.fragment.auth.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void startHikerActivity(View view) {
         startActivity(new Intent(this, TrailActivity.class));
+    }
+
+    public void startLoginActivity(View view) {
+        startActivity(new Intent(this, AuthActivity.class));
     }
 
 }
