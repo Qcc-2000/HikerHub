@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import edu.northeastern.hikerhub.MainActivity;
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.hiker.TrailActivity;
 import edu.northeastern.hikerhub.hiker.fragment.post.PostsFragment;
 
 public class LoginActivity extends AppCompatActivity {
@@ -88,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                                     // Sign in success, update UI with the signed-in user's information
                                     Toast.makeText(getApplicationContext(), "Login successful.",
                                             Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), AuthActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), TrailActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {

@@ -38,8 +38,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, TrailActivity.class));
     }
 
-    public void startLoginActivity(View view) {
-        startActivity(new Intent(this, AuthActivity.class));
-    }
 
 }

@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import edu.northeastern.hikerhub.MainActivity;
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.hiker.TrailActivity;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -87,7 +88,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(RegisterActivity.this, "Account created.",
                                             Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), AuthActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), TrailActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
