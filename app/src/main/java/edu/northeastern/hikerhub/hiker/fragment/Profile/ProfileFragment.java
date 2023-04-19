@@ -42,6 +42,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -69,7 +70,6 @@ public class ProfileFragment extends Fragment {
     private TextView location;
     //private Spinner hikingLevel;
 
-    private Spinner editHikingLevel;
     private CardView profilePictureCard;
     private ImageButton editProfileButton;
     private TextView selectedHikingLevel;
@@ -249,13 +249,13 @@ public class ProfileFragment extends Fragment {
 
 
     private void showEditProfileDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), R.style.CustomDialogStyle);
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_edit_profile, null);
 
         EditText editUserName = view.findViewById(R.id.edit_user_name);
-       // Spinner editHikingLevelSpinner = view.findViewById(R.id.edit_hiking_level_spinner);
-        editHikingLevel = view.findViewById(R.id.edit_hiking_level_spinner);
+
+        MaterialAutoCompleteTextView editHikingLevel = view.findViewById(R.id.edit_hiking_level_spinner);
         Button saveChangesButton = view.findViewById(R.id.save_changes_button);
 
         // Set the current values of user name and hiking level
@@ -269,7 +269,9 @@ public class ProfileFragment extends Fragment {
         editHikingLevel.setAdapter(adapter);
 
         int spinnerPosition = adapter.getPosition(userHikingLevel);
-        editHikingLevel.setSelection(spinnerPosition);
+        if (spinnerPosition >= 0) {
+            editHikingLevel.setText(adapter.getItem(spinnerPosition).toString(), false);
+        }
 
         builder.setView(view);
         AlertDialog dialog = builder.create();
@@ -280,7 +282,7 @@ public class ProfileFragment extends Fragment {
             public void onClick(View v) {
                 // Update user name and hiking level
                 userName.setText(editUserName.getText().toString());
-                userHikingLevel = editHikingLevel.getSelectedItem().toString();
+                userHikingLevel = editHikingLevel.getText().toString();
                 updateSelectedHikingLevel();
                 saveUserProfileToFirebase();
                 dialog.dismiss();

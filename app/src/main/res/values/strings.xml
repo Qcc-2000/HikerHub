@@ -48,9 +48,9 @@
     </string-array>
 
     <string-array name="hiking_level">
-        <item>beginner</item>
-        <item>intermediate</item>
-        <item>advanced</item>
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
     </string-array>
 
 

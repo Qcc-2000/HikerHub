@@ -12,4 +12,10 @@
     <color name="textSecondaryColor">#7F7F7F</color>
     <color name="accent">#3F51B5</color>
     <color name="textButtonColor">#FFFFFF</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="dialogTitle">#3F51B5</color>
+    <color name="dialogButton">#FF4081</color>
 </resources>
