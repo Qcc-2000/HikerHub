@@ -17,7 +17,27 @@
         android:theme="@style/Theme.HikerHub"
         tools:targetApi="31">
         <activity
+            android:name=".hiker.fragment.post.CreatePostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".hiker.fragment.post.PostDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".hiker.fragment.post.BlogPostItem"
+            android:exported="false" />
+        <activity
             android:name=".hiker.TrailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".hiker.fragment.auth.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+        <activity
+            android:name=".hiker.fragment.auth.LoginActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+        <activity
+            android:name=".hiker.fragment.auth.AuthActivity"
             android:exported="false" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -33,7 +53,6 @@
         <meta-data
             android:name=" com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD2TQIieC2ueFeWLhv4Y4BmB6XWeR057nI" />

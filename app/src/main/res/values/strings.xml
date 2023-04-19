@@ -18,4 +18,31 @@
     <string name="title_home">Home</string>
     <string name="title_posts">Posts</string>
     <string name="title_profile">Profile</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to login</string>
+    <string name="click_to_register">Click to register</string>
+    <string name="logout">Logout</string>
+    <string name="create_new_post">Create new post</string>
+    <string name="post_title">Post title</string>
+    <string name="post_content">Post content</string>
+    <string name="submit_post">Submit</string>
+    <string name="error_title_empty">Please add your title</string>
+    <string name="error_content_empty">Please add your content</string>
+    <string name="post_created">Your post is created</string>
+
+    <string name="select_category">Select Category</string>
+    <string name="post_creation_failed">Post creation failed</string>
+    <string name="error_category_empty">Please select your category</string>
+    <string name="recommended">Do you recommend this trail?</string>
+    <string-array name="categories">
+        <item>Technology</item>
+        <item>Travel</item>
+        <item>Food</item>
+        <item>Health</item>
+        <item>Lifestyle</item>
+    </string-array>
+
 </resources>
