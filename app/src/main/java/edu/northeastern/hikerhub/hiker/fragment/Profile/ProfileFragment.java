@@ -1,9 +1,13 @@
 package edu.northeastern.hikerhub.hiker.fragment.Profile;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -20,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +41,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,7 +49,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 
 import edu.northeastern.hikerhub.R;
@@ -106,26 +117,14 @@ public class ProfileFragment extends Fragment {
                 Uri selectedImageUri = result.getData().getData();
                 if (selectedImageUri != null) {
                     //profilePicture.setImageURI(selectedImageUri);
+
                     loadImageFromGallery(selectedImageUri);
                 } else {
                     Toast.makeText(requireContext(), "Error selecting image", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-//        hikingLevel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                updateSelectedHikingLevel();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
 
-
-        //setupSpinner();
         loadUserProfileFromFirebase();
         updateSelectedHikingLevel();
         setupProfilePictureImageView();
@@ -139,30 +138,76 @@ public class ProfileFragment extends Fragment {
             String userId = currentUser.getUid();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-            User user = new User(
-                    userName.getText().toString(),
-                    location.getText().toString(),
-                    selectedHikingLevel.getText().toString().replace("Hiking Level: ", ""),
-                    profilePicture.toString()
-                   // null // You can store the profile picture URL here if you have one
-            );
 
-            databaseReference.child(userId).setValue(user)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Toast.makeText(requireContext(), "Profile information saved", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(requireContext(), "Error saving profile information", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            // Get an instance of Firebase Storage
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+
+            // Create a reference for the profile picture
+            StorageReference profilePicRef = storageRef.child("profile_pictures/" + userId + ".jpg");
+
+            // Get the image from the ImageView as a Bitmap
+            Bitmap bitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
+
+            // Compress the Bitmap to a JPEG format and convert it to a byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+            byte[] data = baos.toByteArray();
+
+            // Upload the byte array to Firebase Storage
+            UploadTask uploadTask = profilePicRef.putBytes(data);
+            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    if (isAdded())
+                    {
+                        // Get the download URL of the uploaded image
+                        Task<Uri> downloadUrlTask = taskSnapshot.getStorage().getDownloadUrl();
+                        downloadUrlTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // Save the download URL to the Firebase Realtime Database
+                                DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+                                User user = new User(
+                                        userName.getText().toString(),
+                                        location.getText().toString(),
+                                        selectedHikingLevel.getText().toString().replace("Hiking Level: ", ""),
+                                        uri.toString() // Save the profile picture URL here
+                                );
+
+                                userRef.setValue(user)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Toast.makeText(requireContext(), "Profile information saved", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(requireContext(), "Error saving profile information", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        });
+                    }else {
+                        Log.e(TAG, "Fragment not attached to the context.");
+                    }
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // Handle any errors
+                    Toast.makeText(requireContext(), "Error uploading profile picture", Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             Toast.makeText(requireContext(), "User not signed in", Toast.LENGTH_SHORT).show();
         }
+
     }
     private void loadUserProfileFromFirebase() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -173,17 +218,23 @@ public class ProfileFragment extends Fragment {
             databaseReference.child(userId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    if (user != null) {
-                        userName.setText(user.name);
-                        location.setText(user.location);
-                        selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
-                        // Load profile picture from the URL if available
-                        if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
-                            // Replace this with your preferred image loading library, e.g. Glide, Picasso, etc.
-                            // Glide.with(requireContext()).load(user.profilePictureUrl).into(profilePicture);
+                    if (isAdded())
+                    {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null) {
+                            userName.setText(user.name);
+                            location.setText(user.location);
+                            selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
+                            // Load profile picture from the URL if available
+                            if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
+                                loadImageFromGallery(user.profilePictureUrl);
+                            }
                         }
                     }
+                    else {
+                        Log.e(TAG, "Fragment not attached to the context.");
+                    }
+
                 }
 
                 @Override
@@ -244,17 +295,22 @@ public class ProfileFragment extends Fragment {
         selectedHikingLevel.setText("Hiking Level: " + userHikingLevel);
     }
 
-    private void setupSpinner() {
-        // Spinner setup code
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),
-                R.array.hiking_level, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        editHikingLevel.setAdapter(adapter);
-        updateSelectedHikingLevel();
+    private void loadImageFromGallery(Uri selectedImageUri) {
+        if (isAdded()) {
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), selectedImageUri);
+                profilePicture.setImageBitmap(bitmap);
+                saveUserProfileToFirebase();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Error loading image", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.e(TAG, "Fragment not attached to the context.");
+        }
     }
 
-
-    private void loadImageFromGallery(Uri imageUri) {
+    private void loadImageFromGallery(String imageUri) {
         Glide.with(requireContext())
                 .load(imageUri)
                 .into(profilePicture);
@@ -265,6 +321,7 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 requestPermissionsAndOpenImagePicker();
+
             }
         });
     }
