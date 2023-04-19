@@ -18,6 +18,7 @@
     <string name="title_home">Home</string>
     <string name="title_posts">Posts</string>
     <string name="title_profile">Profile</string>
+
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -44,5 +45,12 @@
         <item>Health</item>
         <item>Lifestyle</item>
     </string-array>
+
+    <string-array name="hiking_level">
+        <item>beginner</item>
+        <item>intermediate</item>
+        <item>advanced</item>
+    </string-array>
+
 
 </resources>

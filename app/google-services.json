@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "97742451220",
-    "project_id": "group-8443f",
-    "storage_bucket": "group-8443f.appspot.com"
+    "project_number": "262513397191",
+    "project_id": "hikerhub-76fc0",
+    "storage_bucket": "hikerhub-76fc0.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:97742451220:android:8bc470257325a055276d01",
+        "mobilesdk_app_id": "1:262513397191:android:b918918b2ebefb121f1de2",
         "android_client_info": {
           "package_name": "edu.northeastern.hikerhub"
         }
       },
       "oauth_client": [
         {
-          "client_id": "97742451220-k8r4ofbr7t9smgr81eikmr24pgqv46hj.apps.googleusercontent.com",
+          "client_id": "262513397191-m57gjfk3dtv93pstanebcbnqvkjol96b.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAG3XuZ1PVBiwZP6TO4Ag1ALUR-t0JqeZk"
+          "current_key": "AIzaSyB198NCykgtCsYMTSbFCaEddB8ZEXcXfvU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "97742451220-k8r4ofbr7t9smgr81eikmr24pgqv46hj.apps.googleusercontent.com",
+              "client_id": "262513397191-m57gjfk3dtv93pstanebcbnqvkjol96b.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
