@@ -24,11 +24,11 @@ import edu.northeastern.hikerhub.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    TextInputEditText editTextEmail, editTextPassword;
+    TextInputEditText editTextEmail, editTextPassword, editTextUsername;
     Button buttonReg;
     FirebaseAuth mAuth;
     ProgressBar progressBar;
-    TextView textView;
+    TextView textViewLogin;
 
     @Override
     public void onStart() {
@@ -49,10 +49,11 @@ public class RegisterActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
+        // editTextUsername = findViewById(R.id.user_name);
         buttonReg = findViewById(R.id.btn_register);
         progressBar = findViewById(R.id.progressBar);
-        textView = findViewById(R.id.loginNow);
-        textView.setOnClickListener(new View.OnClickListener() {
+        textViewLogin = findViewById(R.id.loginNow);
+        textViewLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

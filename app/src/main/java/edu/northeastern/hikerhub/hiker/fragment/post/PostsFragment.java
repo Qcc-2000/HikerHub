@@ -10,10 +10,7 @@ import android.view.ViewGroup;
 
 import edu.northeastern.hikerhub.R;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +27,7 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
 
     private RecyclerView recyclerView;
     private BlogPostAdapter blogPostAdapter;
-    private List<BlogPost> blogPosts;
+    private List<BlogPostItem> blogPostItems;
     private FloatingActionButton fabCreatePost;
     private DatabaseReference postsRef;
 
@@ -46,9 +43,9 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        blogPosts = new ArrayList<>(); // Replace this with real data from your backend
-        blogPostAdapter = new BlogPostAdapter(blogPosts, this);
-        recyclerView.setAdapter(blogPostAdapter);
+
+        // Load blog post data from your backend here
+        loadBlogPosts();
 
         // Initialize FloatingActionButton
         fabCreatePost = view.findViewById(R.id.fab_create_post);
@@ -61,19 +58,16 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
             }
         });
 
-        // Load blog post data from your backend here
-        loadBlogPosts();
-
         return view;
     }
 
     @Override
     public void onBlogPostClick(int position) {
-        BlogPost blogPost = blogPosts.get(position);
+        BlogPostItem blogPostItem = blogPostItems.get(position);
 
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
-        intent.putExtra("title", blogPost.getTitle());
-        intent.putExtra("content", blogPost.getContent());
+        intent.putExtra("title", blogPostItem.getTitle());
+        intent.putExtra("content", blogPostItem.getContent());
         startActivity(intent);
     }
 
@@ -81,15 +75,14 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         postsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<BlogPostItem> blogPostItems = new ArrayList<>();
+                blogPostItems = new ArrayList<>();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     BlogPostItem blogPostItem = postSnapshot.getValue(BlogPostItem.class);
                     blogPostItems.add(blogPostItem);
                 }
 
-                BlogPostAdapter blogPostAdapter;
-                blogPostAdapter = new BlogPostAdapter(blogPosts, PostsFragment.this);
+                blogPostAdapter = new BlogPostAdapter(blogPostItems, PostsFragment.this);
                 recyclerView.setAdapter(blogPostAdapter);
             }
 
@@ -99,5 +92,4 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
             }
         });
     }
-
 }

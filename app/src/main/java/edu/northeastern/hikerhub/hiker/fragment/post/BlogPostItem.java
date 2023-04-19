@@ -1,16 +1,67 @@
 package edu.northeastern.hikerhub.hiker.fragment.post;
 
-import androidx.appcompat.app.AppCompatActivity;
+public class BlogPostItem {
+    private String title;
+    private String content;
+    private String category;
+    private boolean recommended;
+    private String author;
+    private String postDate;
 
-import android.os.Bundle;
+    public BlogPostItem(String title, String content, String category, boolean recommended, String author, String postDate) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.recommended = recommended;
+        this.author = author;
+        this.postDate = postDate;
+    }
 
-import edu.northeastern.hikerhub.R;
+    public String getTitle() {
+        return title;
+    }
 
-public class BlogPostItem extends AppCompatActivity {
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.blog_post_item);
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public boolean isRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(boolean recommended) {
+        this.recommended = recommended;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getPostDate() {
+        return postDate;
+    }
+
+    public void setPostDate(String postDate) {
+        this.postDate = postDate;
     }
 }

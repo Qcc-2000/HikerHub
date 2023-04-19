@@ -38,6 +38,7 @@
     <string name="post_creation_failed">Post creation failed</string>
     <string name="error_category_empty">Please select your category</string>
     <string name="recommended">Do you recommend this trail?</string>
+    <string name="user_name">User name</string>
     <string-array name="categories">
         <item>Technology</item>
         <item>Travel</item>

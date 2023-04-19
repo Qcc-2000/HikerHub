@@ -14,34 +14,34 @@ import edu.northeastern.hikerhub.R;
 
 public class BlogPostAdapter extends RecyclerView.Adapter<BlogPostAdapter.BlogPostViewHolder> {
 
-    private List<BlogPost> blogPosts;
+    private List<BlogPostItem> blogPostItems;
     private OnBlogPostClickListener onBlogPostClickListener;
 
-    public BlogPostAdapter(List<BlogPost> blogPosts, OnBlogPostClickListener onBlogPostClickListener) {
-        this.blogPosts = blogPosts;
+    public BlogPostAdapter(List<BlogPostItem> blogPostItems, OnBlogPostClickListener onBlogPostClickListener) {
+        this.blogPostItems = blogPostItems;
         this.onBlogPostClickListener = onBlogPostClickListener;
     }
 
     @NonNull
     @Override
     public BlogPostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blog_post_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_blog_post_item, parent, false);
         return new BlogPostViewHolder(view, onBlogPostClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BlogPostViewHolder holder, int position) {
-        BlogPost blogPost = blogPosts.get(position);
+        BlogPostItem blogPostItem = blogPostItems.get(position);
 
-        holder.postTitle.setText(blogPost.getTitle());
-        holder.postContent.setText(blogPost.getContent());
-        holder.postCategory.setText(blogPost.getCategory());
-        holder.postDate.setText(blogPost.getPostDate());
+        holder.postTitle.setText(blogPostItem.getTitle());
+        holder.postContent.setText(blogPostItem.getContent());
+        holder.postCategory.setText(blogPostItem.getCategory());
+        holder.postDate.setText(blogPostItem.getPostDate());
     }
 
     @Override
     public int getItemCount() {
-        return blogPosts.size();
+        return blogPostItems.size();
     }
 
     public interface OnBlogPostClickListener {

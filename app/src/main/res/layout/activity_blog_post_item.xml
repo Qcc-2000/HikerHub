@@ -2,8 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".hiker.fragment.post.BlogPostItemActivity">
 
     <TextView
         android:id="@+id/post_title"
@@ -14,12 +16,21 @@
         android:textColor="@color/black" />
 
     <TextView
-        android:id="@+id/post_summary"
+        android:id="@+id/post_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Post Summary"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/post_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Post Date"
+        android:textAppearance="?attr/textAppearanceCaption"
+        android:textColor="@color/quantum_grey" />
 
 </LinearLayout>

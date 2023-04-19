@@ -29,7 +29,7 @@
             android:name=".hiker.fragment.post.PostDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".hiker.fragment.post.BlogPostItem"
+            android:name=".hiker.fragment.post.BlogPostItemActivity"
             android:exported="false" />
         <activity
             android:name=".hiker.TrailActivity"
