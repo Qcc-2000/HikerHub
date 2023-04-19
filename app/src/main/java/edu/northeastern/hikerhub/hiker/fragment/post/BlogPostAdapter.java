@@ -14,12 +14,20 @@ import edu.northeastern.hikerhub.R;
 
 public class BlogPostAdapter extends RecyclerView.Adapter<BlogPostAdapter.BlogPostViewHolder> {
 
+
     private List<BlogPostItem> blogPostItems;
     private OnBlogPostClickListener onBlogPostClickListener;
 
     public BlogPostAdapter(List<BlogPostItem> blogPostItems, OnBlogPostClickListener onBlogPostClickListener) {
         this.blogPostItems = blogPostItems;
         this.onBlogPostClickListener = onBlogPostClickListener;
+    }
+    public List<BlogPostItem> getBlogPostItems() {
+        return blogPostItems;
+    }
+
+    public void setBlogPostItems(List<BlogPostItem> blogPostItems) {
+        this.blogPostItems = blogPostItems;
     }
 
     @NonNull

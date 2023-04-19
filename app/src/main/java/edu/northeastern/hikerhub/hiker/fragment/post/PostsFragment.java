@@ -43,7 +43,8 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         // Initialize RecyclerView
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+        List<BlogPostItem> items = new ArrayList<>();
+        blogPostAdapter = new BlogPostAdapter(items,PostsFragment.this);
         // Load blog post data from your backend here
         loadBlogPosts();
 
@@ -75,15 +76,15 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         postsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 blogPostItems = new ArrayList<>();
 
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     BlogPostItem blogPostItem = postSnapshot.getValue(BlogPostItem.class);
                     blogPostItems.add(blogPostItem);
                 }
-
-                blogPostAdapter = new BlogPostAdapter(blogPostItems, PostsFragment.this);
-                recyclerView.setAdapter(blogPostAdapter);
+                blogPostAdapter.setBlogPostItems(blogPostItems);
+                blogPostAdapter.notifyDataSetChanged();
             }
 
             @Override
