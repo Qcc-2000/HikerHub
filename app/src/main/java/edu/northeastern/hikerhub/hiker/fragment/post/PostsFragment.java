@@ -45,6 +45,9 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         List<BlogPostItem> items = new ArrayList<>();
         blogPostAdapter = new BlogPostAdapter(items,PostsFragment.this);
+
+        recyclerView.setAdapter(blogPostAdapter);
+
         // Load blog post data from your backend here
         loadBlogPosts();
 
