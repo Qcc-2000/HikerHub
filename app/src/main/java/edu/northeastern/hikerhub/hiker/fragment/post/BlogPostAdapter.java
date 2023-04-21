@@ -41,10 +41,22 @@ public class BlogPostAdapter extends RecyclerView.Adapter<BlogPostAdapter.BlogPo
     public void onBindViewHolder(@NonNull BlogPostViewHolder holder, int position) {
         BlogPostItem blogPostItem = blogPostItems.get(position);
 
-        holder.postTitle.setText(blogPostItem.getTitle());
-        holder.postContent.setText(blogPostItem.getContent());
-        holder.postCategory.setText(blogPostItem.getCategory());
-        holder.postDate.setText(blogPostItem.getPostDate());
+        if (holder.postTitle != null) {
+            holder.postTitle.setText(blogPostItem.getTitle());
+        }
+
+        if (holder.postContent != null) {
+            holder.postContent.setText(blogPostItem.getContent());
+        }
+
+        if (holder.postCategory != null) {
+            holder.postCategory.setText(blogPostItem.getCategory());
+        }
+
+        if (holder.postDate != null) {
+            holder.postDate.setText(blogPostItem.getPostDate());
+        }
+
     }
 
     @Override

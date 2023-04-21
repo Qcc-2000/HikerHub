@@ -50,6 +50,15 @@
             android:textColor="@color/black" />
 
         <TextView
+            android:id="@+id/recommendOrNot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Recommend or not"
+            android:textSize="15sp"
+            android:textColor="@color/black" />
+
+        <TextView
             android:id="@+id/post_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

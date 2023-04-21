@@ -72,6 +72,9 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
         intent.putExtra("title", blogPostItem.getTitle());
         intent.putExtra("content", blogPostItem.getContent());
+        intent.putExtra("category", blogPostItem.getCategory());
+        intent.putExtra("postDate", blogPostItem.getPostDate());
+        //intent.putExtra("author", blogPostItem.getAuthor());
         startActivity(intent);
     }
 

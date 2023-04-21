@@ -8,6 +8,9 @@ public class BlogPostItem {
     private String author;
     private String postDate;
 
+    public BlogPostItem() {
+
+    }
     public BlogPostItem(String title, String content, String category, boolean recommended, String author, String postDate) {
         this.title = title;
         this.content = content;
