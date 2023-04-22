@@ -19,6 +19,14 @@ public class Trail {
     private Difficulty difficulty = Difficulty.EASY;
 
     public Trail() {}
+
+    public Trail(String name) {
+        this.name = name;
+    }
+    public Trail(String name, int recommendCount) {
+        this.name = name;
+        this.recommendCount = recommendCount;
+    }
     public Trail(double latitude, double longitude, String name, double length) {
         this.latitude = latitude;
         this.longitude = longitude;

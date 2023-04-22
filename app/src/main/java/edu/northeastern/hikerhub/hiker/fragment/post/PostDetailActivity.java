@@ -16,8 +16,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView postContent;
     private TextView postDate;
     private TextView postCategory;
-    private TextView recommend;
-    private TextView author;
+    private TextView postAuthor;
+    private TextView postRecommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +28,26 @@ public class PostDetailActivity extends AppCompatActivity {
         postContent = findViewById(R.id.post_content);
         postCategory = findViewById(R.id.post_category);
         postDate = findViewById(R.id.post_date);
-        author = findViewById(R.id.post_author);
+        postAuthor = findViewById(R.id.post_author);
+        postRecommend = findViewById(R.id.recommendOrNot);
 
         String title = getIntent().getStringExtra("title");
         String content = getIntent().getStringExtra("content");
         String category = getIntent().getStringExtra("category");
-        String postDate = getIntent().getStringExtra("postDate");
+        String date = getIntent().getStringExtra("postDate");
         String author = getIntent().getStringExtra("author");
+        boolean recommend = getIntent().getBooleanExtra("recommended", true);
 
         postTitle.setText(title);
         postContent.setText(content);
         postCategory.setText(category);
-//        postDate.setText(postDate);
-//        author.setText(author);
+        postDate.setText(date);
+        postAuthor.setText(author);
+
+        if (recommend) {
+            postRecommend.setText("recommends this trail");
+        } else {
+            postRecommend.setText("does not recommend this trail " + recommend);
+        }
     }
 }

@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Post Title"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/black" />
 
@@ -25,17 +25,17 @@
             android:id="@+id/post_category"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:text="Post Category"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/post_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="8dp"
             android:text="Post Date"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="@color/quantum_grey" />
@@ -46,16 +46,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="Author"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textColor="@color/black" />
 
         <TextView
             android:id="@+id/recommendOrNot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="10dp"
             android:text="Recommend or not"
-            android:textSize="15sp"
+            android:textSize="18sp"
             android:textColor="@color/black" />
 
         <TextView
@@ -64,8 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="Post Content"
-            android:textSize="15sp"
+            android:textSize="16sp"
             android:textColor="@color/black" />
 
     </LinearLayout>
+
 </ScrollView>

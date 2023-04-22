@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.hiker.fragment.Profile.User;
+import edu.northeastern.hikerhub.hiker.fragment.home.Trail;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -15,8 +18,13 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +47,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private Spinner spinnerCategory;
     private CheckBox checkBoxRecommend;
     DatabaseReference postsRef;
+    DatabaseReference trailsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,22 +112,52 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private void saveNewPost(String title, String content, String category, boolean isRecommended, String postDate) {
         // Backend logic
+        String author = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        Trail trail1;
+
         postsRef = database.getReference("posts");
+        trailsRef = database.getReference("trails");
 
         // Create a new post object with the input data
-        Map<String, Object> post = new HashMap<>();
-        post.put("title", title);
-        post.put("content", content);
-        post.put("category", category);
-        post.put("recommend", isRecommended);
-        post.put("postDate", postDate);
+        BlogPostItem post = new BlogPostItem(
+                title, content, category, isRecommended, author, postDate
+        );
+
+        if (isRecommended) {
+            trail1 = new Trail(category, 1);
+        } else {
+            trail1 = new Trail(category, 0);
+        }
+
 
         // Generate a new unique key for the post
-        String key = postsRef.push().getKey();
+        String postKey = postsRef.push().getKey();
+
+        // Generate a new unique key for the post
+        String trailKey = trailsRef.push().getKey();
+
+        trailsRef.orderByChild("name").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Handle data
+                System.out.println(dataSnapshot.getValue().toString() + "OOOMMMGGGGGGG !!!!");
+//                Trail trail = new Trail(category, 1);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+
+
+        // Add the post object to the "trails" reference in the Realtime Database
+        trailsRef.child(trailKey).setValue(trail1);
 
         // Add the post object to the "posts" reference in the Realtime Database
-        postsRef.child(key).setValue(post)
+        postsRef.child(postKey).setValue(post)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -132,6 +171,8 @@ public class CreatePostActivity extends AppCompatActivity {
                         Toast.makeText(CreatePostActivity.this, getString(R.string.post_creation_failed), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
 
         // After saving, return to MainActivity and update the list of posts
         Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();

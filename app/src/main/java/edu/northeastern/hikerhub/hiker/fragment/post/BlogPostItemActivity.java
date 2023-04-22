@@ -12,7 +12,6 @@ public class BlogPostItemActivity extends AppCompatActivity {
     private TextView postTitle;
     private TextView postDate;
     private TextView postCategory;
-    private TextView recommend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

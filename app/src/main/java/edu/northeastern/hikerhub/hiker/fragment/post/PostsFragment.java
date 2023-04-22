@@ -69,12 +69,15 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
     public void onBlogPostClick(int position) {
         BlogPostItem blogPostItem = blogPostItems.get(position);
 
+        System.out.println(blogPostItem.isRecommended() + "IIIIMMMMMMMHHHHEEERRERERERERERERE");
         Intent intent = new Intent(getActivity(), PostDetailActivity.class);
         intent.putExtra("title", blogPostItem.getTitle());
         intent.putExtra("content", blogPostItem.getContent());
         intent.putExtra("category", blogPostItem.getCategory());
         intent.putExtra("postDate", blogPostItem.getPostDate());
-        //intent.putExtra("author", blogPostItem.getAuthor());
+        intent.putExtra("author", blogPostItem.getAuthor());
+        intent.putExtra("recommended", blogPostItem.isRecommended());
+
         startActivity(intent);
     }
 
