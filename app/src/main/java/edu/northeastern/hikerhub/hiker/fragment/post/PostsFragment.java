@@ -2,6 +2,7 @@ package edu.northeastern.hikerhub.hiker.fragment.post;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -10,15 +11,19 @@ import android.view.ViewGroup;
 
 import edu.northeastern.hikerhub.R;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -49,8 +54,8 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         recyclerView.setAdapter(blogPostAdapter);
 
         // Load blog post data from your backend here
-        loadBlogPosts();
-
+        //loadBlogPosts();
+        loadUserPosts();
         // Initialize FloatingActionButton
         fabCreatePost = view.findViewById(R.id.fab_create_post);
         fabCreatePost.setOnClickListener(new View.OnClickListener() {
@@ -81,25 +86,38 @@ public class PostsFragment extends Fragment implements BlogPostAdapter.OnBlogPos
         startActivity(intent);
     }
 
-    private void loadBlogPosts() {
-        postsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                blogPostItems = new ArrayList<>();
+    private void loadUserPosts() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null)
+        {
+            String userId = currentUser.getUid();
+            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
+            //Query userPostsQuery = postsRef.orderByChild("userId").equalTo(userId);
 
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    BlogPostItem blogPostItem = postSnapshot.getValue(BlogPostItem.class);
-                    blogPostItems.add(blogPostItem);
+            postsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    blogPostItems = new ArrayList<>();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        BlogPostItem post = postSnapshot.getValue(BlogPostItem.class);
+                        if (post != null) {
+                            blogPostItems.add(post);
+                        }
+                    }
+                    blogPostAdapter.setBlogPostItems(blogPostItems);
+                    blogPostAdapter.notifyDataSetChanged();
+                    // Use the userPosts list to update the UI, e.g., display the posts in a RecyclerView
                 }
-                blogPostAdapter.setBlogPostItems(blogPostItems);
-                blogPostAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle error
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle any errors that occurred while retrieving posts
+                    Toast.makeText(getActivity(), "Error loading user posts", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
+
 }

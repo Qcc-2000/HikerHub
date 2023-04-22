@@ -80,6 +80,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 if (validateInput(title, content, category)) {
                     // Save the new post to your backend here
                     saveNewPost(title, content, category, isRecommended, currentDate);
+                    //savePostToFirebase(title, content, category, isRecommended, currentDate);
                 }
             }
         });
@@ -111,72 +112,109 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     private void saveNewPost(String title, String content, String category, boolean isRecommended, String postDate) {
-        // Backend logic
-        String author = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        Trail trail1;
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            String author = currentUser.getEmail();
+            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
+            String postId = postsRef.push().getKey();
 
-        postsRef = database.getReference("posts");
-        trailsRef = database.getReference("trails");
+            BlogPostItem post = new BlogPostItem(
+                    userId,title, content, category, isRecommended, author, postDate
+            );
 
-        // Create a new post object with the input data
-        BlogPostItem post = new BlogPostItem(
-                title, content, category, isRecommended, author, postDate
-        );
+            if (postId != null) {
+                postsRef.child(postId).setValue(post)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Post saved successfully
+                                Toast.makeText(getApplicationContext(), "Post saved successfully", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Error saving post
+                                Toast.makeText(getApplicationContext(), "Error saving post", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        });
 
-        if (isRecommended) {
-            trail1 = new Trail(category, 1);
-        } else {
-            trail1 = new Trail(category, 0);
+                        // After saving, return to MainActivity and update the list of posts
+                Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
         }
 
-
-        // Generate a new unique key for the post
-        String postKey = postsRef.push().getKey();
-
-        // Generate a new unique key for the post
-        String trailKey = trailsRef.push().getKey();
-
-        trailsRef.orderByChild("name").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Handle data
-                System.out.println(dataSnapshot.getValue().toString() + "OOOMMMGGGGGGG !!!!");
-//                Trail trail = new Trail(category, 1);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle error
-            }
-        });
-
-
-        // Add the post object to the "trails" reference in the Realtime Database
-        trailsRef.child(trailKey).setValue(trail1);
-
-        // Add the post object to the "posts" reference in the Realtime Database
-        postsRef.child(postKey).setValue(post)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_creation_failed), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-
-
-        // After saving, return to MainActivity and update the list of posts
-        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
-        finish();
+//        // Backend logic
+//        String author = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        Trail trail1;
+//
+//        postsRef = database.getReference("posts");
+//        trailsRef = database.getReference("trails");
+//
+//        // Create a new post object with the input data
+//        BlogPostItem post = new BlogPostItem(
+//                title, content, category, isRecommended, author, postDate
+//        );
+//
+//        if (isRecommended) {
+//            trail1 = new Trail(category, 1);
+//        } else {
+//            trail1 = new Trail(category, 0);
+//        }
+//
+//
+//        // Generate a new unique key for the post
+//        String postKey = postsRef.push().getKey();
+//
+//        // Generate a new unique key for the post
+//        String trailKey = trailsRef.push().getKey();
+//
+//        trailsRef.orderByChild("name").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // Handle data
+//                System.out.println(dataSnapshot.getValue().toString() + "OOOMMMGGGGGGG !!!!");
+////                Trail trail = new Trail(category, 1);
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Handle error
+//            }
+//        });
+//
+//
+//        // Add the post object to the "trails" reference in the Realtime Database
+//        trailsRef.child(trailKey).setValue(trail1);
+//
+//        // Add the post object to the "posts" reference in the Realtime Database
+//        postsRef.child(postKey).setValue(post)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
+//                        finish();
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_creation_failed), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//
+//
+//
+//        // After saving, return to MainActivity and update the list of posts
+//        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
+//        finish();
     }
 }
 

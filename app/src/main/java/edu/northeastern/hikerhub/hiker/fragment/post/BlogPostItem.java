@@ -1,6 +1,7 @@
 package edu.northeastern.hikerhub.hiker.fragment.post;
 
 public class BlogPostItem {
+    private String userId;
     private String title;
     private String content;
     private String category;
@@ -11,7 +12,9 @@ public class BlogPostItem {
     public BlogPostItem() {
 
     }
-    public BlogPostItem(String title, String content, String category, boolean recommended, String author, String postDate) {
+
+    public BlogPostItem(String userId, String title, String content, String category, boolean recommended, String author, String postDate) {
+        this.userId = userId;
         this.title = title;
         this.content = content;
         this.category = category;
@@ -66,5 +69,13 @@ public class BlogPostItem {
 
     public void setPostDate(String postDate) {
         this.postDate = postDate;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

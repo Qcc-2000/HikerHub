@@ -30,6 +30,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -47,11 +49,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -62,6 +59,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -69,14 +67,19 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import edu.northeastern.hikerhub.MainActivity;
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.hiker.fragment.post.BlogPostAdapter;
+import edu.northeastern.hikerhub.hiker.fragment.post.BlogPostItem;
+import edu.northeastern.hikerhub.hiker.fragment.post.PostDetailActivity;
+import edu.northeastern.hikerhub.hiker.fragment.post.PostsFragment;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogPostClickListener {
     private static final int REQUEST_IMAGE_PICKER = 1;
     private static final int REQUEST_PERMISSIONS = 2;
     private static final int REQUEST = 1;
@@ -95,6 +98,10 @@ public class ProfileFragment extends Fragment {
     private ActivityResultLauncher<String[]> requestPermissionLauncher;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
     private LocationManager locationManager;
+    private RecyclerView profilePostsRecyclerView;
+    private BlogPostAdapter blogPostAdapter;
+
+    private List<BlogPostItem> blogPostItems;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,14 +171,40 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
+        // ...
+        profilePostsRecyclerView = view.findViewById(R.id.profile_posts_recycler_view);
+
+        profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        List<BlogPostItem> items = new ArrayList<>();
+        blogPostAdapter = new BlogPostAdapter(items, ProfileFragment.this);
+
+        profilePostsRecyclerView.setAdapter(blogPostAdapter);
 
         loadUserProfileFromFirebase();
+        loadUserPostsFromFirebase();
         updateSelectedHikingLevel();
         setupProfilePictureImageView();
         setupEditProfileButton();
 
         return view;
     }
+    @Override
+    public void onBlogPostClick(int position) {
+        BlogPostItem blogPostItem = blogPostItems.get(position);
+
+        System.out.println(blogPostItem.isRecommended() + "IIIIMMMMMMMHHHHEEERRERERERERERERE");
+        Intent intent = new Intent(getActivity(), PostDetailActivity.class);
+        intent.putExtra("title", blogPostItem.getTitle());
+        intent.putExtra("content", blogPostItem.getContent());
+        intent.putExtra("category", blogPostItem.getCategory());
+        intent.putExtra("postDate", blogPostItem.getPostDate());
+        intent.putExtra("author", blogPostItem.getAuthor());
+        intent.putExtra("recommended", blogPostItem.isRecommended());
+
+        startActivity(intent);
+    }
+
 
     private void saveUserProfileToFirebase() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -255,7 +288,6 @@ public class ProfileFragment extends Fragment {
         if (currentUser != null) {
             String userId = currentUser.getUid();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("users");
-
             databaseReference.child(userId).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -264,7 +296,6 @@ public class ProfileFragment extends Fragment {
                         User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
                             userName.setText(user.name);
-                            //location.setText(user.location);
                             selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
                             // Load profile picture from the URL if available
                             if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
@@ -286,6 +317,38 @@ public class ProfileFragment extends Fragment {
         } else {
             Toast.makeText(requireContext(), "User not signed in", Toast.LENGTH_SHORT).show();
         }
+    }
+    private void loadUserPostsFromFirebase() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null)
+        {
+            String userId = currentUser.getUid();
+            DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("posts");
+            Query userPostsQuery = postsRef.orderByChild("userId").equalTo(userId);
+
+            userPostsQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    blogPostItems = new ArrayList<>();
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        BlogPostItem post = postSnapshot.getValue(BlogPostItem.class);
+                        if (post != null) {
+                            blogPostItems.add(post);
+                        }
+                    }
+                    blogPostAdapter.setBlogPostItems(blogPostItems);
+                    blogPostAdapter.notifyDataSetChanged();
+                    // Use the userPosts list to update the UI, e.g., display the posts in a RecyclerView
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle any errors that occurred while retrieving posts
+                    Toast.makeText(getActivity(), "Error loading user posts", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
     }
 
 
@@ -369,7 +432,6 @@ public class ProfileFragment extends Fragment {
             if(location!=null) {
                 double latitude = locationDetail.getLatitude();
                 double longitude = locationDetail.getLongitude();
-                // Do something with the latitude and longitude values
                 Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
                 try {
                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
