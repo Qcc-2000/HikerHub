@@ -34,6 +34,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -128,6 +129,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                updateTrailRecommendation(category);
                                 // Post saved successfully
                                 Toast.makeText(getApplicationContext(), "Post saved successfully", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -215,6 +217,30 @@ public class CreatePostActivity extends AppCompatActivity {
 //        // After saving, return to MainActivity and update the list of posts
 //        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
 //        finish();
+    }
+
+    public void updateTrailRecommendation(String category)
+    {
+        DatabaseReference trailsRef = FirebaseDatabase.getInstance().getReference("trails");
+        trailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot trailSnapshot : dataSnapshot.getChildren()) {
+                    Trail trail = trailSnapshot.getValue(Trail.class);
+                    if (trail != null && trail.getName().equals(category)) {
+                        int currentRecommendCount = trail.getRecommendCount();
+                        trailSnapshot.getRef().child("recommendCount").setValue(currentRecommendCount + 1);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle any errors that occurred while retrieving posts
+                Toast.makeText(getApplicationContext(), "Error loading user posts", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
 
