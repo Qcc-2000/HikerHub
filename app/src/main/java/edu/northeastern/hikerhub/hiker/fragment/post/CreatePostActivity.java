@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -47,8 +48,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private MaterialButton btnSubmitPost;
     private Spinner spinnerCategory;
     private CheckBox checkBoxRecommend;
-    DatabaseReference postsRef;
-    DatabaseReference trailsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +128,10 @@ public class CreatePostActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                updateTrailRecommendation(category);
+                                if (isRecommended) {
+                                    updateTrailRecommendation(category);
+                                }
+
                                 // Post saved successfully
                                 Toast.makeText(getApplicationContext(), "Post saved successfully", Toast.LENGTH_SHORT).show();
                                 finish();
@@ -150,88 +152,28 @@ public class CreatePostActivity extends AppCompatActivity {
             }
 
         }
-
-//        // Backend logic
-//        String author = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        Trail trail1;
-//
-//        postsRef = database.getReference("posts");
-//        trailsRef = database.getReference("trails");
-//
-//        // Create a new post object with the input data
-//        BlogPostItem post = new BlogPostItem(
-//                title, content, category, isRecommended, author, postDate
-//        );
-//
-//        if (isRecommended) {
-//            trail1 = new Trail(category, 1);
-//        } else {
-//            trail1 = new Trail(category, 0);
-//        }
-//
-//
-//        // Generate a new unique key for the post
-//        String postKey = postsRef.push().getKey();
-//
-//        // Generate a new unique key for the post
-//        String trailKey = trailsRef.push().getKey();
-//
-//        trailsRef.orderByChild("name").equalTo(category).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // Handle data
-//                System.out.println(dataSnapshot.getValue().toString() + "OOOMMMGGGGGGG !!!!");
-////                Trail trail = new Trail(category, 1);
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                // Handle error
-//            }
-//        });
-//
-//
-//        // Add the post object to the "trails" reference in the Realtime Database
-//        trailsRef.child(trailKey).setValue(trail1);
-//
-//        // Add the post object to the "posts" reference in the Realtime Database
-//        postsRef.child(postKey).setValue(post)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
-//                        finish();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(CreatePostActivity.this, getString(R.string.post_creation_failed), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//
-//
-//
-//        // After saving, return to MainActivity and update the list of posts
-//        Toast.makeText(CreatePostActivity.this, getString(R.string.post_created), Toast.LENGTH_SHORT).show();
-//        finish();
     }
 
-    public void updateTrailRecommendation(String category)
-    {
+    public void updateTrailRecommendation(String category) {
+
         DatabaseReference trailsRef = FirebaseDatabase.getInstance().getReference("trails");
         trailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isExisted = false;
                 for (DataSnapshot trailSnapshot : dataSnapshot.getChildren()) {
                     Trail trail = trailSnapshot.getValue(Trail.class);
                     if (trail != null && trail.getName().equals(category)) {
+                        isExisted = true;
                         int currentRecommendCount = trail.getRecommendCount();
                         trailSnapshot.getRef().child("recommendCount").setValue(currentRecommendCount + 1);
                         break;
                     }
+                }
+                if (!isExisted) {
+                    String trailKey = trailsRef.push().getKey();
+                    Trail trail = new Trail(category, 1);
+                    trailsRef.child(trailKey).setValue(trail);
                 }
             }
 
@@ -242,5 +184,6 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
     }
+
 }
 
