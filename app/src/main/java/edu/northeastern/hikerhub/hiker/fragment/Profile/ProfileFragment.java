@@ -2,12 +2,20 @@ package edu.northeastern.hikerhub.hiker.fragment.Profile;
 
 import static android.content.ContentValues.TAG;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -39,6 +47,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -56,27 +69,32 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import edu.northeastern.hikerhub.MainActivity;
 import edu.northeastern.hikerhub.R;
 
 public class ProfileFragment extends Fragment {
     private static final int REQUEST_IMAGE_PICKER = 1;
     private static final int REQUEST_PERMISSIONS = 2;
+    private static final int REQUEST = 1;
+    private static final String LATITUDE_KEY = "latitude";
+    private static final String LONGITUDE_KEY = "longitude";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
     private String userHikingLevel = "Beginner"; // Set a default hiking level
-
+    private String locationProvider = null;
     private ImageView profilePicture;
     private TextView userName;
     private TextView location;
-    //private Spinner hikingLevel;
 
     private CardView profilePictureCard;
     private ImageButton editProfileButton;
     private TextView selectedHikingLevel;
     private ActivityResultLauncher<String[]> requestPermissionLauncher;
     private ActivityResultLauncher<Intent> imagePickerLauncher;
-
-
+    private LocationManager locationManager;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,9 +111,31 @@ public class ProfileFragment extends Fragment {
         profilePictureCard = view.findViewById(R.id.profile_picture_card_view);
         editProfileButton = view.findViewById(R.id.edit_profile_button);
         selectedHikingLevel = view.findViewById(R.id.selected_hiking_level);
+        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
         if (savedInstanceState != null) {
             userName.setText(savedInstanceState.getString("user_name"));
             userHikingLevel = savedInstanceState.getString("user_hiking_level");
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            // Ask for permission
+            //request
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST);
+        } else {
+            //provider
+            List<String> providers = locationManager.getProviders(true);
+            if (providers.contains(LocationManager.GPS_PROVIDER)) {
+                locationProvider = LocationManager.GPS_PROVIDER;
+            } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+                locationProvider = LocationManager.NETWORK_PROVIDER;
+            } else {
+                Toast.makeText(requireContext(), "No Available Locator", Toast.LENGTH_SHORT).show();
+                return view;
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         }
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), result -> {
             boolean allGranted = true;
@@ -129,6 +169,7 @@ public class ProfileFragment extends Fragment {
         updateSelectedHikingLevel();
         setupProfilePictureImageView();
         setupEditProfileButton();
+
         return view;
     }
 
@@ -223,7 +264,7 @@ public class ProfileFragment extends Fragment {
                         User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
                             userName.setText(user.name);
-                            location.setText(user.location);
+                            //location.setText(user.location);
                             selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
                             // Load profile picture from the URL if available
                             if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
@@ -291,6 +332,82 @@ public class ProfileFragment extends Fragment {
 
         dialog.show();
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST: {
+                // allowed
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //location manager
+                    locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+                    //provider
+                    List<String> providers = locationManager.getProviders(true);
+                    if (providers.contains(LocationManager.GPS_PROVIDER)) {
+                        locationProvider = LocationManager.GPS_PROVIDER;
+                    } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+                        locationProvider = LocationManager.NETWORK_PROVIDER;
+                    } else {
+                        Toast.makeText(requireContext(), "No Available Locator", Toast.LENGTH_SHORT).show();
+                    }
+                    //get location
+                    try {
+                        locationManager.requestLocationUpdates(locationProvider, 0, 0, locationListener);
+                    } catch (SecurityException e) {
+                    }
+                }
+                break;
+            }
+        }
+    }
+    public LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location locationDetail) {
+            if(location!=null) {
+                double latitude = locationDetail.getLatitude();
+                double longitude = locationDetail.getLongitude();
+                // Do something with the latitude and longitude values
+                Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    if (addresses != null && !addresses.isEmpty()) {
+                        Address address = addresses.get(0);
+                        String cityName = address.getLocality();
+                        location.setText(cityName);
+                    } else {
+                        location.setText("Cannot determine city name");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    location.setText("Error in getting city name");
+                }
+
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            System.out.println(provider);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            System.out.println(provider);
+        }
+    };
+    @Override
+    public void onStop() {
+        super.onStop();
+        locationManager.removeUpdates(locationListener);
+    }
+
 
     private void updateSelectedHikingLevel() {
        // String selectedLevel = editHikingLevel.getSelectedItem().toString();

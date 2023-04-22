@@ -23,6 +23,7 @@ import edu.northeastern.hikerhub.MainActivity;
 import edu.northeastern.hikerhub.R;
 import edu.northeastern.hikerhub.hiker.TrailActivity;
 import edu.northeastern.hikerhub.hiker.fragment.post.PostsFragment;
+import edu.northeastern.hikerhub.utils.ViewUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -54,6 +55,10 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
         textView = findViewById(R.id.registerNow);
+
+//        editTextPassword.addTextChangedListener(new ViewUtils.JumpTextWatcher(editTextPassword,textView));
+//
+//        editTextEmail.addTextChangedListener(new ViewUtils.JumpTextWatcher(editTextEmail,textView));
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
