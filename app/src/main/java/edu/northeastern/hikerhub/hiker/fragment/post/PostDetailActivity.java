@@ -2,10 +2,16 @@ package edu.northeastern.hikerhub.hiker.fragment.post;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import edu.northeastern.hikerhub.R;
+import edu.northeastern.hikerhub.hiker.fragment.Profile.ProfileFragment;
+import edu.northeastern.hikerhub.hiker.fragment.Profile.UserProfileActivity;
+
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +25,8 @@ public class PostDetailActivity extends AppCompatActivity {
     private TextView postAuthor;
     private TextView postRecommend;
 
+    private ImageView userProfileIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +38,14 @@ public class PostDetailActivity extends AppCompatActivity {
         postDate = findViewById(R.id.post_date);
         postAuthor = findViewById(R.id.post_author);
         postRecommend = findViewById(R.id.recommendOrNot);
+        userProfileIcon = findViewById(R.id.user_profile_icon);
 
         String title = getIntent().getStringExtra("title");
         String content = getIntent().getStringExtra("content");
         String category = getIntent().getStringExtra("category");
         String date = getIntent().getStringExtra("postDate");
         String author = getIntent().getStringExtra("author");
+        String userId = getIntent().getStringExtra("user_id");
         boolean recommend = getIntent().getBooleanExtra("recommended", true);
 
         postTitle.setText(title);
@@ -49,5 +59,18 @@ public class PostDetailActivity extends AppCompatActivity {
         } else {
             postRecommend.setText("does not recommend this trail " + recommend);
         }
+        userProfileIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userId == null)
+                {
+                    return;
+                }
+                Intent intent = new Intent(getApplicationContext(), UserProfileActivity.class);
+                intent.putExtra("user_id", userId);
+
+                startActivity(intent);
+            }
+        });
     }
 }

@@ -174,7 +174,6 @@ public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogP
         // ...
         profilePostsRecyclerView = view.findViewById(R.id.profile_posts_recycler_view);
 
-        profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         profilePostsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         List<BlogPostItem> items = new ArrayList<>();
         blogPostAdapter = new BlogPostAdapter(items, ProfileFragment.this);
@@ -201,7 +200,7 @@ public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogP
         intent.putExtra("postDate", blogPostItem.getPostDate());
         intent.putExtra("author", blogPostItem.getAuthor());
         intent.putExtra("recommended", blogPostItem.isRecommended());
-
+        intent.putExtra("user_id", blogPostItem.getUserId());
         startActivity(intent);
     }
 
