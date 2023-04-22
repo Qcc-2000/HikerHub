@@ -68,6 +68,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -425,6 +426,19 @@ public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogP
             }
         }
     }
+
+    private void updateLocationInFirebase(String cityName)
+    {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("users").child(userId);
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("location", cityName);
+            userReference.updateChildren(updates);
+        }
+
+    }
     public LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location locationDetail) {
@@ -438,6 +452,7 @@ public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogP
                         Address address = addresses.get(0);
                         String cityName = address.getLocality();
                         location.setText(cityName);
+                        updateLocationInFirebase(cityName);
                     } else {
                         location.setText("Cannot determine city name");
                     }
