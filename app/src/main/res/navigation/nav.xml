@@ -7,7 +7,7 @@
     >
     <fragment
         android:id="@+id/nav_fragment"
-        android:name="edu.northeastern.hikerhub.hiker.fragment.NavFragment"
+        android:name="edu.northeastern.hikerhub.hiker.fragment.navigation.NavFragment"
         android:label="@string/title_navigation"
         tools:layout="@layout/fragment_nav"/>
 </navigation>
