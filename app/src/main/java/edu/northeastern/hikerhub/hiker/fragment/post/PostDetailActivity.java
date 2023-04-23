@@ -57,7 +57,7 @@ public class PostDetailActivity extends AppCompatActivity {
         if (recommend) {
             postRecommend.setText("recommends this trail");
         } else {
-            postRecommend.setText("does not recommend this trail " + recommend);
+            postRecommend.setText("does not recommend this trail");
         }
         userProfileIcon.setOnClickListener(new View.OnClickListener() {
             @Override
