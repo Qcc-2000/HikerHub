@@ -52,6 +52,7 @@ public class UserProfileActivity extends AppCompatActivity implements BlogPostAd
         setContentView(R.layout.activity_user_profile);
         init();
         if (getIntent().hasExtra("user_id")) {
+            selectedHikingLevel.setText("Hiking Level: beginner");
             userId = getIntent().getStringExtra("user_id");
             loadUserProfile(userId);
             loadUserPosts(userId);
@@ -83,9 +84,19 @@ public class UserProfileActivity extends AppCompatActivity implements BlogPostAd
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if (user != null) {
-                    userName.setText(user.name);
-                    location.setText(user.location);
-                    selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
+                    if (user.name != null)
+                    {
+                        userName.setText(user.name);
+                    }
+                    if (user.location != null)
+                    {
+                        location.setText(user.location);
+                    }
+                    if (user.hikingLevel != null)
+                    {
+                        selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
+                    }
+
                     // Load profile picture from the URL if available
                     if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
                         loadImageFromGallery(user.profilePictureUrl);
