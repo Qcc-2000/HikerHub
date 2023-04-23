@@ -155,7 +155,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         mapFragment.getMapAsync(this);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
         btnLoadMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
