@@ -295,8 +295,14 @@ public class ProfileFragment extends Fragment implements BlogPostAdapter.OnBlogP
                     {
                         User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
-                            userName.setText(user.name);
-                            selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
+                            if (user.name != null)
+                            {
+                                userName.setText(user.name);
+                            }
+                            if (user.hikingLevel != null)
+                            {
+                                selectedHikingLevel.setText("Hiking Level: " + user.hikingLevel);
+                            }
                             // Load profile picture from the URL if available
                             if (user.profilePictureUrl != null && !user.profilePictureUrl.isEmpty()) {
                                 loadImageFromGallery(user.profilePictureUrl);
