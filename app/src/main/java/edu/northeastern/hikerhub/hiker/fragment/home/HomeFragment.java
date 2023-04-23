@@ -80,7 +80,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location lastKnownLocation;
-    private List<Trail> listTrail;
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
 
     @Override
@@ -107,17 +106,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         trailsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listTrail = new ArrayList<>();
                 for (DataSnapshot trailSnapshot : snapshot.getChildren()) {
                     Trail trail = trailSnapshot.getValue(Trail.class);
                     if (trail != null) {
-                        System.out.println(trail.getName() + " IMMMMM HEREEEEEE");
-                        System.out.println(trail.getRecommendCount() + "count");
                         int recommendCount = trail.getRecommendCount();
                         String trailName = trail.getName();
                         allTrails.get(trailName).setRecommendCount(recommendCount);
                     }
                 }
+                List<Trail> mostListTrails = utils.getMostLikeTrails();
+                likeTrialRecViewAdapter.setTrails(mostListTrails);
             }
 
             @Override
@@ -142,8 +140,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         topTrails = utils.getTopTrails(latitude, longitude);
         topTrialRecViewAdapter.setTrails(topTrails);
 
-        List<Trail> mostListTrails = utils.getMostLikeTrails();
-        likeTrialRecViewAdapter.setTrails(mostListTrails);
+//        List<Trail> mostListTrails = utils.getMostLikeTrails();
+//        likeTrialRecViewAdapter.setTrails(mostListTrails);
+
+
+
     }
 
     @Override
