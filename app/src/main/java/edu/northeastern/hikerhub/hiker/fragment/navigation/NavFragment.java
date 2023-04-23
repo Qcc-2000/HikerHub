@@ -72,6 +72,7 @@ public class NavFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button stop;
     private Button con;
     private Button clean;
+    private long pause;
 
 
     @Override
@@ -116,6 +117,7 @@ public class NavFragment extends Fragment implements OnMapReadyCallback, Locatio
             @Override
             public void onClick(View view) {
                 chronometer.stop();
+                pause = SystemClock.elapsedRealtime();
                 startCalDistance = false;
                 stop.setVisibility(View.INVISIBLE);
                 clean.setVisibility(View.VISIBLE);
@@ -125,6 +127,7 @@ public class NavFragment extends Fragment implements OnMapReadyCallback, Locatio
         con.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                chronometer.setBase(chronometer.getBase() + SystemClock.elapsedRealtime() - pause);
                 chronometer.start();
                 startCalDistance = true;
                 clean.setVisibility(View.INVISIBLE);
@@ -177,7 +180,7 @@ public class NavFragment extends Fragment implements OnMapReadyCallback, Locatio
 
     private void refreshDistance() {
         distanceTextView.setText("DISTANCE: " + String.format("%.2f",distance * 0.000621371192237) + " MI");
-        elevationTextView.setText("ELEVATION: " + lastElevation);
+        elevationTextView.setText("ELEVATION: " + String.format("%.2f",lastElevation));
         avgSpeedTextView.setText("SPEED: " + String.format("%.2f",avg_speed) + " MI/h");
     }
 
@@ -228,8 +231,6 @@ public class NavFragment extends Fragment implements OnMapReadyCallback, Locatio
                 refreshDistance();
                 avg_speed = distance * 2236.9362920532 / (SystemClock.elapsedRealtime() - chronometer.getBase());
             }
-            System.out.println(SystemClock.elapsedRealtime());
-            System.out.println(chronometer.getBase());
         }
     };
 
