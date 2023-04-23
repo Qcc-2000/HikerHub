@@ -28,30 +28,38 @@
         tools:targetApi="31">
         <activity
             android:name=".hiker.fragment.Profile.UserProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.post.CreatePostActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.post.PostDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.post.BlogPostItemActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.TrailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.auth.RegisterActivity"
             android:exported="false"
-            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+            android:theme="@style/Theme.Material3.Light.NoActionBar"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.auth.LoginActivity"
             android:exported="false"
-            android:theme="@style/Theme.Material3.Light.NoActionBar" />
+            android:theme="@style/Theme.Material3.Light.NoActionBar"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".hiker.fragment.auth.AuthActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
