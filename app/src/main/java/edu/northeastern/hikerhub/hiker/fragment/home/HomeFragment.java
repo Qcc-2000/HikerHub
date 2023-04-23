@@ -133,18 +133,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
         likeTrialRecViewAdapter = new TrialRecViewAdapter(requireContext());
         likeTrailsRecView.setAdapter(likeTrialRecViewAdapter);
         likeTrailsRecView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-
-        //TODO：get the current location for user
-        double latitude = 46.5301011;
-        double longitude = -122.0326191;
-        topTrails = utils.getTopTrails(latitude, longitude);
-        topTrialRecViewAdapter.setTrails(topTrails);
-
-//        List<Trail> mostListTrails = utils.getMostLikeTrails();
-//        likeTrialRecViewAdapter.setTrails(mostListTrails);
-
-
-
     }
 
     @Override
@@ -202,11 +190,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
-        Log.e(TAG, "onMapReady");
+        Log.i(TAG, "onMapReady");
         // The map is ready, so it is safe to call getView() and hide the map.
         mapFragment.getView().setVisibility(View.GONE);
         myMap = googleMap;
-
         markerCurrentLocation();
         markerAllTrails();
 
@@ -283,7 +270,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
         // Set an info window click listener on the cluster manager
         clusterManager.setOnClusterItemInfoWindowClickListener(item -> {
-            Log.e(TAG, "onClusterItemInfoWindowClick is called================");
             cardViewTrail.setVisibility(View.VISIBLE);
             TextView txtTitle = cardViewTrail.findViewById(R.id.txtTrailNameMap);
             TextView txtLenTime = cardViewTrail.findViewById(R.id.txtTrailLenTimeMap);
@@ -318,8 +304,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
                 public void onSuccess(Location location) {
                     if (location != null) {
                         lastKnownLocation = location;
+                        topTrails = utils.getTopTrails(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                        topTrialRecViewAdapter.setTrails(topTrails);
                         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                        //myMap.addMarker(new MarkerOptions().position(latLng).title("Issaquah"));
                         myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
                     }
                 }
