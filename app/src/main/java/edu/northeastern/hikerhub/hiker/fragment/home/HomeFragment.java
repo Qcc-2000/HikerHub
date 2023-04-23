@@ -42,6 +42,11 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
@@ -75,6 +80,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient mFusedLocationClient;
     private Location lastKnownLocation;
+    private List<Trail> listTrail;
     private final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
 
     @Override
@@ -97,6 +103,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback{
 
         utils = Utils.getInstance(getContext(), PATHNAME);
         allTrails = utils.getAllTrails();
+        DatabaseReference trailsRef = FirebaseDatabase.getInstance().getReference("trails");
+        trailsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listTrail = new ArrayList<>();
+                for (DataSnapshot trailSnapshot : snapshot.getChildren()) {
+                    Trail trail = trailSnapshot.getValue(Trail.class);
+                    if (trail != null) {
+                        System.out.println(trail.getName() + " IMMMMM HEREEEEEE");
+                        System.out.println(trail.getRecommendCount() + "count");
+                        int recommendCount = trail.getRecommendCount();
+                        String trailName = trail.getName();
+                        allTrails.get(trailName).setRecommendCount(recommendCount);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void initRecViewData() {

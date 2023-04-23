@@ -3,6 +3,9 @@ package edu.northeastern.hikerhub.hiker.fragment.home;
 import android.content.Context;
 import android.location.Location;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
